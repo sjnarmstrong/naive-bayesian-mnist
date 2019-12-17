@@ -1,0 +1,1177 @@
+                               THE MNIST DATABASE
+
+                             of handwritten digits
+                       Yann LeCun, Courant Institute, NYU
+                     Corinna Cortes, Google Labs, New York
+                                        
+   The MNIST database of handwritten digits, available from this page, has a
+   training set of 60,000 examples, and a test set of 10,000 examples. It is
+   a subset of a larger set available from NIST. The digits have been
+   size-normalized and centered in a fixed-size image.
+
+   It is a good database for people who want to try learning techniques and
+   pattern recognition methods on real-world data while spending minimal
+   efforts on preprocessing and formatting.
+
+   Four files are available on this site:
+
+   train-images-idx3-ubyte:  training set images
+   train-labels-idx1-ubyte:  training set labels
+   t10k-images-idx3-ubyte:   test set images
+   t10k-labels-idx1-ubyte:   test set labels
+
+   These files are not in any standard image format. You have to write your
+   own (very simple) program to read them. The file format is described at 
+   the bottom of this page.
+
+   The original black and white (bilevel) images from NIST were size
+   normalized to fit in a 20x20 pixel box while preserving their aspect
+   ratio. The resulting images contain grey levels as a result of the
+   anti-aliasing technique used by the normalization algorithm. the images
+   were centered in a 28x28 image by computing the center of mass of the
+   pixels, and translating the image so as to position this point at the
+   center of the 28x28 field.
+
+   With some classification methods (particuarly template-based methods, such
+   as SVM and K-nearest neighbors), the error rate improves when the digits
+   are centered by bounding box rather than center of mass. If you do this
+   kind of pre-processing, you should report it in your publications.
+
+   The MNIST database was constructed from NIST's Special Database 3 and
+   Special Database 1 which contain binary images of handwritten digits. NIST
+   originally designated SD-3 as their training set and SD-1 as their test
+   set. However, SD-3 is much cleaner and easier to recognize than SD-1. The
+   reason for this can be found on the fact that SD-3 was collected among
+   Census Bureau employees, while SD-1 was collected among high-school
+   students. Drawing sensible conclusions from learning experiments requires
+   that the result be independent of the choice of training set and test
+   among the complete set of samples. Therefore it was necessary to build a
+   new database by mixing NIST's datasets.
+
+   The MNIST training set is composed of 30,000 patterns from SD-3 and 30,000
+   patterns from SD-1. Our test set was composed of 5,000 patterns from SD-3
+   and 5,000 patterns from SD-1. The 60,000 pattern training set contained
+   examples from approximately 250 writers. We made sure that the sets of
+   writers of the training set and test set were disjoint.
+
+   SD-1 contains 58,527 digit images written by 500 different writers. In
+   contrast to SD-3, where blocks of data from each writer appeared in
+   sequence, the data in SD-1 is scrambled. Writer identities for SD-1 is
+   available and we used this information to unscramble the writers. We then
+   split SD-1 in two: characters written by the first 250 writers went into
+   our new training set. The remaining 250 writers were placed in our test
+   set. Thus we had two sets with nearly 30,000 examples each. The new
+   training set was completed with enough examples from SD-3, starting at
+   pattern # 0, to make a full set of 60,000 training patterns. Similarly,
+   the new test set was completed with SD-3 examples starting at pattern #
+   35,000 to make a full set with 60,000 test patterns. Only a subset of
+   10,000 test images (5,000 from SD-1 and 5,000 from SD-3) is available on
+   this site. The full 60,000 sample training set is available.
+
+   Many methods have been tested with this training set and test set. Here
+   are a few examples. Details about the methods are given in an upcoming
+   paper. Some of those experiments used a version of the database where the
+   input images where deskewed (by computing the principal axis of the shape
+   that is closest to the vertical, and shifting the lines so as to make it
+   vertical). In some other experiments, the training set was augmented with
+   artificially distorted versions of the original training samples. The
+   distortions are random combinations of shifts, scaling, skewing, and
+   compression.
+    
+
+   +------------------------------------------------------------------------+
+   |                            |                  |    TEST|               |
+   |CLASSIFIER                  |PREPROCESSING     |   ERROR|Reference      |
+   |                            |                  |RATE (%)|               |
+   |----------------------------+------------------+--------+---------------|
+   |linear classifier (1-layer  |none              |    12.0|LeCun et al.   |
+   |NN)                         |                  |        |1998           |
+   |----------------------------+------------------+--------+---------------|
+   |linear classifier (1-layer  |deskewing         |     8.4|LeCun et al.   |
+   |NN)                         |                  |        |1998           |
+   |----------------------------+------------------+--------+---------------|
+   |pairwise linear classifier  |deskewing         |     7.6|LeCun et al.   |
+   |                            |                  |        |1998           |
+   |----------------------------+------------------+--------+---------------|
+   |K-nearest-neighbors,        |none              |     5.0|LeCun et al.   |
+   |Euclidean (L2)              |                  |        |1998           |
+   |----------------------------+------------------+--------+---------------|
+   |K-nearest-neighbors,        |none              |    3.09|Kenneth Wilder,|
+   |Euclidean (L2)              |                  |        |U. Chicago     |
+   |----------------------------+------------------+--------+---------------|
+   |K-nearest-neighbors, L3     |none              |    2.83|Kenneth Wilder,|
+   |                            |                  |        |U. Chicago     |
+   |----------------------------+------------------+--------+---------------|
+   |K-nearest-neighbors,        |deskewing         |     2.4|LeCun et al.   |
+   |Euclidean (L2)              |                  |        |1998           |
+   |----------------------------+------------------+--------+---------------|
+   |K-nearest-neighbors,        |deskewing, noise  |    1.80|Kenneth Wilder,|
+   |Euclidean (L2)              |removal, blurring |        |U. Chicago     |
+   |----------------------------+------------------+--------+---------------|
+   |K-nearest-neighbors, L3     |deskewing, noise  |    1.73|Kenneth Wilder,|
+   |                            |removal, blurring |        |U. Chicago     |
+   |----------------------------+------------------+--------+---------------|
+   |                            |deskewing, noise  |        |Kenneth Wilder,|
+   |K-nearest-neighbors, L3     |removal, blurring,|    1.33|U. Chicago     |
+   |                            |1 pixel shift     |        |               |
+   |----------------------------+------------------+--------+---------------|
+   |                            |deskewing, noise  |        |Kenneth Wilder,|
+   |K-nearest-neighbors, L3     |removal, blurring,|    1.22|U. Chicago     |
+   |                            |2 pixel shift     |        |               |
+   |----------------------------+------------------+--------+---------------|
+   |K-NN, shape context matching|shape context     |    0.63|Belongie et al.|
+   |                            |feature extraction|        |IEEE PAMI 2002 |
+   |----------------------------+------------------+--------+---------------|
+   |40 PCA + quadratic          |none              |     3.3|LeCun et al.   |
+   |classifier                  |                  |        |1998           |
+   |----------------------------+------------------+--------+---------------|
+   |1000 RBF + linear classifier|none              |     3.6|LeCun et al.   |
+   |                            |                  |        |1998           |
+   |----------------------------+------------------+--------+---------------|
+   |K-NN, Tangent Distance      |subsampling to    |     1.1|LeCun et al.   |
+   |                            |16x16 pixels      |        |1998           |
+   |----------------------------+------------------+--------+---------------|
+   |SVM, Gaussian Kernel        |none              |     1.4|               |
+   |----------------------------+------------------+--------+---------------|
+   |SVM deg 4 polynomial        |deskewing         |     1.1|LeCun et al.   |
+   |                            |                  |        |1998           |
+   |----------------------------+------------------+--------+---------------|
+   |Reduced Set SVM deg 5       |deskewing         |     1.0|LeCun et al.   |
+   |polynomial                  |                  |        |1998           |
+   |----------------------------+------------------+--------+---------------|
+   |Virtual SVM deg-9 poly      |none              |     0.8|LeCun et al.   |
+   |[distortions]               |                  |        |1998           |
+   |----------------------------+------------------+--------+---------------|
+   |Virtual SVM, deg-9 poly,    |                  |        |DeCoste and    |
+   |1-pixel jittered            |none              |    0.68|Scholkopf, MLJ |
+   |                            |                  |        |2002           |
+   |----------------------------+------------------+--------+---------------|
+   |Virtual SVM, deg-9 poly,    |                  |        |DeCoste and    |
+   |1-pixel jittered            |deskewing         |    0.68|Scholkopf, MLJ |
+   |                            |                  |        |2002           |
+   |----------------------------+------------------+--------+---------------|
+   |Virtual SVM, deg-9 poly,    |                  |        |DeCoste and    |
+   |2-pixel jittered            |deskewing         |    0.56|Scholkopf, MLJ |
+   |                            |                  |        |2002           |
+   |----------------------------+------------------+--------+---------------|
+   |2-layer NN, 300 hidden      |none              |     4.7|LeCun et al.   |
+   |units, mean square error    |                  |        |1998           |
+   |----------------------------+------------------+--------+---------------|
+   |2-layer NN, 300 HU, MSE,    |none              |     3.6|LeCun et al.   |
+   |[distortions]               |                  |        |1998           |
+   |----------------------------+------------------+--------+---------------|
+   |2-layer NN, 300 HU          |deskewing         |     1.6|LeCun et al.   |
+   |                            |                  |        |1998           |
+   |----------------------------+------------------+--------+---------------|
+   |2-layer NN, 1000 hidden     |none              |     4.5|LeCun et al.   |
+   |units                       |                  |        |1998           |
+   |----------------------------+------------------+--------+---------------|
+   |2-layer NN, 1000 HU,        |none              |     3.8|LeCun et al.   |
+   |[distortions]               |                  |        |1998           |
+   |----------------------------+------------------+--------+---------------|
+   |3-layer NN, 300+100 hidden  |none              |    3.05|LeCun et al.   |
+   |units                       |                  |        |1998           |
+   |----------------------------+------------------+--------+---------------|
+   |3-layer NN, 300+100 HU      |none              |     2.5|LeCun et al.   |
+   |[distortions]               |                  |        |1998           |
+   |----------------------------+------------------+--------+---------------|
+   |3-layer NN, 500+150 hidden  |none              |    2.95|LeCun et al.   |
+   |units                       |                  |        |1998           |
+   |----------------------------+------------------+--------+---------------|
+   |3-layer NN, 500+150 HU      |none              |    2.45|LeCun et al.   |
+   |[distortions]               |                  |        |1998           |
+   |----------------------------+------------------+--------+---------------|
+   |3-layer NN, 500+300 HU,     |                  |        |Hinton,        |
+   |softmax, cross entropy,     |none              |    1.53|unpublished,   |
+   |weight decay                |                  |        |2005           |
+   |----------------------------+------------------+--------+---------------|
+   |2-layer NN, 800 HU,         |none              |     1.6|Simard et al., |
+   |Cross-Entropy Loss          |                  |        |ICDAR 2003     |
+   |----------------------------+------------------+--------+---------------|
+   |2-layer NN, 800 HU,         |                  |        |Simard et al., |
+   |cross-entropy [affine       |none              |     1.1|ICDAR 2003     |
+   |distortions]                |                  |        |               |
+   |----------------------------+------------------+--------+---------------|
+   |2-layer NN, 800 HU, MSE     |none              |     0.9|Simard et al., |
+   |[elastic distortions]       |                  |        |ICDAR 2003     |
+   |----------------------------+------------------+--------+---------------|
+   |2-layer NN, 800 HU,         |                  |        |Simard et al., |
+   |cross-entropy [elastic      |none              |     0.7|ICDAR 2003     |
+   |distortions]                |                  |        |               |
+   |----------------------------+------------------+--------+---------------|
+   |Convolutional net LeNet-1   |subsampling to    |     1.7|LeCun et al.   |
+   |                            |16x16 pixels      |        |1998           |
+   |----------------------------+------------------+--------+---------------|
+   |Convolutional net LeNet-4   |none              |     1.1|LeCun et al.   |
+   |                            |                  |        |1998           |
+   |----------------------------+------------------+--------+---------------|
+   |Convolutional net LeNet-4   |                  |        |LeCun et al.   |
+   |with K-NN instead of last   |none              |     1.1|1998           |
+   |layer                       |                  |        |               |
+   |----------------------------+------------------+--------+---------------|
+   |Convolutional net LeNet-4   |                  |        |LeCun et al.   |
+   |with local learning instead |none              |     1.1|1998           |
+   |of last layer               |                  |        |               |
+   |----------------------------+------------------+--------+---------------|
+   |Convolutional net LeNet-5,  |none              |    0.95|LeCun et al.   |
+   |[no distortions]            |                  |        |1998           |
+   |----------------------------+------------------+--------+---------------|
+   |Convolutional net LeNet-5,  |none              |    0.85|LeCun et al.   |
+   |[huge distortions]          |                  |        |1998           |
+   |----------------------------+------------------+--------+---------------|
+   |Convolutional net LeNet-5,  |none              |     0.8|LeCun et al.   |
+   |[distortions]               |                  |        |1998           |
+   |----------------------------+------------------+--------+---------------|
+   |Convolutional net Boosted   |none              |     0.7|LeCun et al.   |
+   |LeNet-4, [distortions]      |                  |        |1998           |
+   |----------------------------+------------------+--------+---------------|
+   |Convolutional net,          |                  |        |Simard et al., |
+   |cross-entropy [affine       |none              |     0.6|ICDAR 2003     |
+   |distortions]                |                  |        |               |
+   |----------------------------+------------------+--------+---------------|
+   |Convolutional net,          |                  |        |Simard et al., |
+   |cross-entropy [elastic      |none              |     0.4|ICDAR 2003     |
+   |distortions]                |                  |        |               |
+   +------------------------------------------------------------------------+
+
+  References
+
+   [LeCun et al., 1998a]
+           Y. LeCun, L. Bottou, Y. Bengio, and P. Haffner. "Gradient-based
+           learning applied to document recognition." Proceedings of the
+           IEEE, 86(11):2278-2324, November 1998. [on-line version]
+
+   --------------------------------------------------------------------------
+
+FILE FORMATS FOR THE MNIST DATABASE
+
+   The data is stored in a very simple file format designed for storing
+   vectors and multidimensional matrices. General info on this format is
+   given at the end of this page, but you don't need to read that to use the
+   data files.
+
+   All the integers in the files are stored in the MSB first (high endian)
+   format used by most non-Intel processors. Users of Intel processors and
+   other low-endian machines must flip the bytes of the header.
+
+   There are 4 files:
+
+   train-images-idx3-ubyte: training set images
+   train-labels-idx1-ubyte: training set labels
+   t10k-images-idx3-ubyte:  test set images
+   t10k-labels-idx1-ubyte:  test set labels
+
+   The training set contains 60000 examples, and the test set 10000 examples.
+
+   The first 5000 examples of the test set are taken from the original NIST
+   training set. The last 5000 are taken from the original NIST test set. The
+   first 5000 are cleaner and easier than the last 5000.
+
+  TRAINING SET LABEL FILE (train-labels-idx1-ubyte):
+
+   [offset] [type]          [value]          [description]
+   0000     32 bit integer  0x00000801(2049) magic number (MSB first)
+   0004     32 bit integer  60000            number of items
+   0008     unsigned byte   ??               label
+   0009     unsigned byte   ??               label
+   ........
+   xxxx     unsigned byte   ??               label
+
+   The labels values are 0 to 9.
+
+  TRAINING SET IMAGE FILE (train-images-idx3-ubyte):
+
+   [offset] [type]          [value]          [description]
+   0000     32 bit integer  0x00000803(2051) magic number
+   0004     32 bit integer  60000            number of images
+   0008     32 bit integer  28               number of rows
+   0012     32 bit integer  28               number of columns
+   0016     unsigned byte   ??               pixel
+   0017     unsigned byte   ??               pixel
+   ........
+   xxxx     unsigned byte   ??               pixel
+
+   Pixels are organized row-wise. Pixel values are 0 to 255. 0 means
+   background (white), 255 means foreground (black).
+
+  TEST SET LABEL FILE (t10k-labels-idx1-ubyte):
+
+   [offset] [type]          [value]          [description]
+   0000     32 bit integer  0x00000801(2049) magic number (MSB first)
+   0004     32 bit integer  10000            number of items
+   0008     unsigned byte   ??               label
+   0009     unsigned byte   ??               label
+   ........
+   xxxx     unsigned byte   ??               label
+
+   The labels values are 0 to 9.
+
+  TEST SET IMAGE FILE (t10k-images-idx3-ubyte):
+
+   [offset] [type]          [value]          [description]
+   0000     32 bit integer  0x00000803(2051) magic number
+   0004     32 bit integer  10000            number of images
+   0008     32 bit integer  28               number of rows
+   0012     32 bit integer  28               number of columns
+   0016     unsigned byte   ??               pixel
+   0017     unsigned byte   ??               pixel
+   ........
+   xxxx     unsigned byte   ??               pixel
+
+   Pixels are organized row-wise. Pixel values are 0 to 255. 0 means
+   background (white), 255 means foreground (black).
+    
+
+   --------------------------------------------------------------------------
+
+THE IDX FILE FORMAT
+
+   the IDX file format is a simple format for vectors and multidimensional
+   matrices of various numerical types.
+
+   The basic format is
+
+   magic number
+   size in dimension 0
+   size in dimension 1
+   size in dimension 2
+   .....
+   size in dimension N
+   data
+
+   The magic number is an integer (MSB first). The first 2 bytes are always
+   0.
+
+   The third byte codes the type of the data:
+   0x08: unsigned byte
+   0x09: signed byte
+   0x0B: short (2 bytes)
+   0x0C: int (4 bytes)
+   0x0D: float (4 bytes)
+   0x0E: double (8 bytes)
+
+   The 4-th byte codes the number of dimensions of the vector/matrix: 1 for
+   vectors, 2 for matrices....
+
+   The sizes in each dimension are 4-byte integers (MSB first, high endian,
+   like in most non-Intel processors).
+
+   The data is stored like in a C array, i.e. the index in the last dimension
+   changes the fastest.
+    
+    
+
+   Happy hacking.
+
+   --------------------------------------------------------------------------
+
+   The digit images in the MNIST set were originally selected and
+   experimented with by Corinna Cortes using bounding-box normalization and
+   centering. Yann LeCun's version which is provided on this page uses
+   centering by center of mass within in a larger window.
+
+   Yann LeCun, Professor
+   The Courant Institute of Mathematical Sciences
+   New York University
+
+   Corinna Cortes, Research Scientist
+   Google Labs, New York
+   corinna at google dot com particularly Lego robots (before the days of the
+   Lego Mindstorms)
+
+  108. [Saul et al., 2003]                                               [IMG] 
+                                                                   
+       L. K. Saul, D. D. Lee, C. L. Isbell, and Y. LeCun, "Real    108KB [IMG] 
+       time voice processing with audiovisual feedback: toward     
+       autonomous agents with perfect pitch.," in Advances in      779KB [IMG] 
+       Neural Information Processing Systems 14, 2003. [8 pages]   619KB [IMG] 
+
+  107. [LeCun and Bottou, 2002]                                      [IMG]     
+                                                                   
+       Y. LeCun and L. Bottou, "Lush Reference Manual," 2002. [8           
+       pages]                                                              
+
+  106. [Haffner et al., 2002]                                            [IMG] 
+                                                                  
+       Patrick Haffner, Leon Bottou, Yann LeCun, and Luc Vincent, 191KB  [IMG] 
+       "A General Segmentation Scheme for DjVu Document           
+       Compression," in Proceedings of the International          5780KB [IMG] 
+       Symposium on Mathematical Morphology (ISMM'02), (Sydney,   
+       Australia), Apr. 2002. [18 pages]                                       
+
+  105. [, 2001]                                                      [IMG]     
+                                                                   
+       Advances in Neural Information Processing Systems:                  
+       Proceedings of the First 12 Conferences, (M. I. Jordan, Y.  
+       LeCun, and S. A. Solla, eds.), MIT Press, 2001. [18 pages]          
+
+  104. [Bottou and Haffner and LeCun, 2001]                              [IMG] 
+                                                                   
+       L. Bottou, P. Haffner, and Y. LeCun, "Conversion of Digital 117KB [IMG] 
+       Documents to Multilayer Raster Formats," in Proceedings of  
+       the International Conference on Document Analysis and       745KB [IMG] 
+       Recognition, Sep. 2001. [10 pages]                          668KB [IMG] 
+
+  103. [LeCun et al., 2001]                                              [IMG] 
+                                                                   
+       Y. LeCun, L. Bottou, Y. Bengio, and P. Haffner,             833KB [IMG] 
+       "Gradient-Based Learning Applied to Document Recognition,"  
+       in Intelligent Signal Processing, pp. 306-351, 2001. [46    688KB [IMG] 
+       pages]                                                      933KB [IMG] 
+
+  102. [Bottou and Haffner and LeCun, 2001]                              [IMG] 
+                                                                   
+       L. Bottou, P. Haffner, and Y. LeCun, "Efficient Conversion  117KB [IMG] 
+       of Digital Documents to Multilayer Raster Formats," in      
+       International Conference on Document Analysis and           745KB [IMG] 
+       Recognition (ICDAR), (Seattle), Sep. 2001. [10 pages]       668KB [IMG] 
+
+  101. [LeCun et al., 2001]                                              [IMG] 
+                                                                   
+       Y. LeCun, L. Bottou, A. Erofeev, P. Haffner, and W.         102KB [IMG] 
+       Riemers, "DjVu Document Browsing with On-Demand loading and 
+       rendering of image components," in Internet Imaging, (San   72KB  [IMG] 
+       Jose), Jan. 2001. [10 pages]                                185KB [IMG] 
+
+  100. [Simard et al., 2001]                                             [IMG] 
+                                                                   
+       P. Y. Simard, Y. LeCun, J. S. Denker, and B. Victorri,      279KB [IMG] 
+       "Transformation Invariance in Pattern Recognition --        
+       Tangent Distance and Tangent Propagation," International    227KB [IMG] 
+       Journal of Imaging Systems and Technology, vol. 11, no. 3,  
+       2001. [35 pages]                                            436KB [IMG] 
+
+  99. [Bottou et al., 2000]                                                    
+                                                                         [IMG]
+      Leon Bottou, P. Haffner, Y. LeCun, Howard P., P. Vincent,    
+      and B. Riemers, "DjVu: Un Systeme de Compression d'Images    108KB [IMG] 
+      pour la Distribution Reticulaire de Documents Numerises.     
+      (DjVu: an image compression system for distributing scanned  74KB  [IMG] 
+      document on the Internet)," in Conference Internationale     
+      Francophone sur L'Ecrit et le Document, (Lyon, France), July 197KB [IMG] 
+      2000. [10 pages]                                             
+
+  98. [Haffner et al., 1999]                                             [IMG] 
+                                                                   
+      P. Haffner, Y. LeCun, Leon Bottou, Howard P., P. Vincent,    79KB  [IMG] 
+      and B. Riemers, "Color Documents on the Web with DjVu," in   
+      International Conference on Image Processing, (Kobe, Japan), 69KB  [IMG] 
+      pp. 239-243, Oct. 1999. [5 pages]                            181KB [IMG] 
+
+  97. [LeCun et al., 1999]                                               [IMG] 
+                                                                   
+      Y. LeCun, P. Haffner, L. Bottou, and Y. Bengio,              387KB [IMG] 
+      "Gradient-Based Learning for Object Detection, Segmentation  434KB [IMG] 
+      and Recognition," AT&T Labs, 1999. [26 pages]                461KB [IMG] 
+
+  96. [LeCun et al., 1999]                                               [IMG] 
+                                                                   
+      Y. LeCun, P. Haffner, L. Bottou, and Y. Bengio, "Object      347KB [IMG] 
+      Recognition with Gradient-Based Learning," in Feature        415KB [IMG] 
+      Grouping, (D. Forsyth, ed.), 1999. [28 pages]                430KB [IMG] 
+
+  95. [Haffner et al., 1999]                                             [IMG] 
+                                                                  
+      P. Haffner, Leon Bottou, Howard P., and Yann LeCun, "DjVu:  86KB   [IMG] 
+      Analyzing and Compressing Scanned Documents for Internet    
+      Distribution," in International Conference on Document      1809KB [IMG] 
+      Analysis and Recognition (ICDAR), pp. 625-628, 1999. [4     
+      pages]                                                      1637KB [IMG] 
+
+  94. [Simard et al., 1999]                                              [IMG] 
+                                                                   
+      P. Simard, L. Bottou, P. Haffner, and Y. LeCun, "Boxlets: a  384KB [IMG] 
+      fast convolution algorithm for neural networks and signal    
+      processing," in Advances in Neural Information Processing    823KB [IMG] 
+      Systems 11, 1999. [7 pages]                                  446KB [IMG] 
+
+  93. [ Chellappa et al., 1998]                                          [IMG] 
+                                                                    
+      R. Chellappa, K. Fukushima, A. Katsaggelos, S.-Y. Kung, Y.    81KB [IMG] 
+      LeCun, N. M. Nasrabadi, and T. A. Poggio, "Applications of    
+      Artificial Neural Networks to Image Processing (guest         75KB [IMG] 
+      editorial)," IEEE Transactions on Image Processing, vol. 7,   
+      no. 8, pp. 1093-1097, Aug. 1998. [4 pages]                    55KB [IMG] 
+
+  92. [LeCun et al., 1998]                                               [IMG] 
+                                                                   
+      Y. LeCun, L. Bottou, P. Haffner, and P. Howard, "DjVu: a     117KB [IMG] 
+      compression method for distributing scanned documents in     782KB [IMG] 
+      color over the internet," in Color 6, 1998. [4 pages]        416KB [IMG] 
+
+  91. [LeCun et al., 1998]                                               [IMG] 
+                                                                   
+      Y. LeCun, L. Bottou, G. Orr, and K. Muller, "Efficient       278KB [IMG] 
+      BackProp," in Neural Networks: Tricks of the trade, (G. Orr  291KB [IMG] 
+      and Muller K., eds.), 1998. [44 pages]                       500KB [IMG] 
+
+  90. [Simard et al., 1998]                                              [IMG] 
+                                                                   
+      P. Simard, Y. LeCun, J. Denker, and B. Victorri,             277KB [IMG] 
+      "Transformation Invariance in Pattern Recognition, Tangent   
+      Distance and Tangent Propagation," in Neural Networks:       227KB [IMG] 
+      Tricks of the trade, (G. Orr and Muller K., eds.), 1998. [35 
+      pages]                                                       436KB [IMG] 
+
+  89. [Haskell et al., 1998]                                             [IMG] 
+                                                                   
+      B. Haskell, P. Howard, Y. LeCun, A. Puri, J. Ostermann, R.   603KB [IMG] 
+      Civanlar, L. Rabiner, L. Bottou, and P. Haffner, "Image and  
+      Video Coding - Emerging Standards and Beyond," IEEE                      
+      Transaction CSVT, vol. 8, no. 7, pp. 814-837, Nov. 1998. [26 
+      pages]                                                                   
+
+  88. [Bottou et al., 1998]                                              [IMG] 
+                                                                  
+      L. Bottou, P. Haffner, P. Howard, P. Simard, Y. Bengio, and 439KB  [IMG] 
+      Y. LeCun, "High Quality Document Image Compression with     
+      DjVu," Journal of Electronic Imaging, vol. 7, no. 3, pp.    1947KB [IMG] 
+      410-425, July 1998. [25 pages]                              1339KB [IMG] 
+
+  87. [Haffner et al., 1998]                                             [IMG] 
+                                                                  
+      P. Haffner, L. Bottou, P. Howard, P. Simard, Y. Bengio, and 257KB  [IMG] 
+      Y. LeCun, "Browsing through High Quality Document Images    
+      with DjVu," in Proc. of Advances in Digital Libraries 98,   1762KB [IMG] 
+      pp. 309-318, 1998. [10 pages]                               1164KB [IMG] 
+
+  86. [LeCun et al., 1998]                                               [IMG] 
+                                                                   
+      Y. LeCun, L. Bottou, Y. Bengio, and P. Haffner,              823KB [IMG] 
+      "Gradient-Based Learning Applied to Document Recognition,"   
+      Proceedings of the IEEE, vol. 86, no. 11, pp. 2278-2324,     688KB [IMG] 
+      Nov. 1998. [46 pages]                                        933KB [IMG] 
+
+  85. [Cox et al., 1998]                                                 [IMG] 
+                                                                  
+      R. Cox, B. Haskell, Y. LeCun, B. Shahraray, and L. Rabiner, 1567KB [IMG] 
+      "On the application of multimedia processing to             
+      telecommunications," Proceedings of the IEEE, vol. 86, no.  1420KB [IMG] 
+      5, pp. 755-824, May 1998. [70 pages]                        1314KB [IMG] 
+
+  84. [Rahim and Bengio and LeCun, 1997]                                 [IMG] 
+                                                                   
+      M. Rahim, Y. Bengio, and Y. LeCun, "Discriminative feature   64KB  [IMG] 
+      and model design for automatic speech recognition," in Proc. 46KB  [IMG] 
+      of Eurospeech, (Rhodes, Greece), 1997. [4 pages]             159KB [IMG] 
+
+  83. [Cox et al., 1997]                                             [IMG]     
+                                                                   
+      R. Cox, B. Haskell, Y. LeCun, B. Shahraray, and L. Rabiner,          
+      "On the application of multimedia processing to              
+      telecommunications," in Proc. of International Conference on         
+      Image Processing, (San Francisco), pp. 5-8, 1997. [4 pages]  
+
+  82. [Bottou and LeCun and Bengio, 1997]                                [IMG] 
+                                                                   
+      L. Bottou, Y. LeCun, and Y. Bengio, "Global Training of      104KB [IMG] 
+      Document Processing Systems using Graph Transformer          
+      Networks," in Proc. of Computer Vision and Pattern           60KB  [IMG] 
+      Recognition, (Puerto-Rico), pp. 490-494, 1997. [6 pages]     114KB [IMG] 
+
+  81. [LeCun and Bottou and Bengio, 1997]                                [IMG] 
+                                                                   
+      Y. LeCun, L. Bottou, and Y. Bengio, "Reading Checks with     71KB  [IMG] 
+      graph transformer networks," in International Conference on  
+      Acoustics, Speech, and Signal Processing, (Munich), pp.      48KB  [IMG] 
+      151-154, 1997. [4 pages]                                     121KB [IMG] 
+
+  80. [Guyon and LeCun and Warwick, 1996]                                [IMG] 
+                                                                  
+      I. Guyon, Y. LeCun, and C. Warwick, "Usability study of     85KB   [IMG] 
+      text entry interfaces for personnal organizers," AT&T Bell  1235KB [IMG] 
+      Labs, 1996. [8 pages]                                       5421KB [IMG] 
+
+  79. [Bengio et al., 1995]                                              [IMG] 
+                                                                   
+      Y. Bengio, Y. LeCun, C. Nohl, and C. Burges, "LeRec: A       101KB [IMG] 
+      NN/HMM Hybrid for On-Line Handwriting Recognition," Neural   
+      Computation, vol. 7, no. 6, pp. 1289-1303, Nov. 1995. [14    65KB  [IMG] 
+      pages]                                                       208KB [IMG] 
+
+  78. [LeCun et al., 1995]                                               [IMG] 
+                                                                   
+      Y. LeCun, L. D. Jackel, L. Bottou, A. Brunot, C. Cortes, J.  67KB  [IMG] 
+      S. Denker, H. Drucker, I. Guyon, U. A. Muller, E. Sackinger, 
+      P. Simard, and V. Vapnik, "Comparison of learning algorithms 46KB  [IMG] 
+      for handwritten digit recognition," in International         
+      Conference on Artificial Neural Networks, (F. Fogelman and   160KB [IMG] 
+      P. Gallinari, eds.), (Paris), pp. 53-60, 1995. [9 pages]     
+
+  77. [LeCun et al., 1995]                                               [IMG] 
+                                                                   
+      Y. LeCun, L. D. Jackel, L. Bottou, C. Cortes, J. S. Denker,  109KB [IMG] 
+      H. Drucker, I. Guyon, U. A. Muller, E. Sackinger, P. Simard, 
+      and V. Vapnik, "Learning Algorithms For Classification: A    114KB [IMG] 
+      Comparison On Handwritten Digit Recognition," in Neural      
+      Networks: The Statistical Mechanics Perspective, (J. H. Oh,  221KB [IMG] 
+      C. Kwon, and S. Cho, eds.), pp. 261-276, 1995. [16 pages]    
+
+  76. [LeCun and Bengio, 1995]                                           [IMG] 
+                                                                   
+      Y. LeCun and Y. Bengio, "Convolutional Networks for Images,  64KB  [IMG] 
+      Speech, and Time-Series," in The Handbook of Brain Theory    40KB  [IMG] 
+      and Neural Networks, (M. A. Arbib, ed.), 1995. [14 pages]    142KB [IMG] 
+
+  75. [LeCun and Bengio, 1995]                                           [IMG] 
+                                                                   
+      Y. LeCun and Y. Bengio, "Pattern Recognition and Neural      97KB  [IMG] 
+      Networks," in The Handbook of Brain Theory and Neural        50KB  [IMG] 
+      Networks, (M. A. Arbib, ed.), 1995. [22 pages]               183KB [IMG] 
+
+  74. [Jackel et al., 1995]                                                    
+                                                                         [IMG]
+      L. Jackel, M. Battista, H. Baird, J. Ben, J. Bromley, C.    
+      Burges, E. Cosatto, J. Denker, H. Graf, H. Katseff, Y.      215KB  [IMG] 
+      LeCun, C. Nohl, E. Sackinger, J. Shamilian, T. Shoemaker,   
+      C. Stenard, I. Strom, R. Ting, T. Wood, and Zuraw C.,       1990KB [IMG] 
+      "Neural-Net Applications in Character Recognition and       
+      Document Analysis," in Neural-Net Applications in           8278KB [IMG] 
+      Telecommunications, 1995. [15 pages]                        
+
+  73. [Chiang et al., 1994]                                          [IMG]     
+                                                                   
+      W Chiang, C. Cortes, L. Jackel, Y. LeCun, W. Lee, E.                 
+      Pednault, and Vapnik V., "Predicting TransportPath           
+      Degradation/Failure Based on Recent Performance History," in         
+      Proc of Symposium on Intelligent Systems in Communications   
+      and Power (SISCAP '94), 1994. [15 pages]                     
+
+  72. [Chiang et al., 1994]                                              [IMG] 
+                                                                   
+      W. Chiang, C. Cortes, L. Jackel, Y. LeCun, and W. Lee,       154KB [IMG] 
+      "Accuracy limits of machine learning: predicting             
+      communication path degradation or failure," AT&T Bell Labs,              
+      1994. [10 pages]                                                         
+
+  71. [Matic et al., 1994]                                               [IMG] 
+                                                                  
+      N. Matic, D. Henderson, Y. Le Cun, and Y. Bengio,           190KB  [IMG] 
+      "Pen-based visitor registration system (PENGUIN)," in       
+      Conference Record of the Twenty-Eighth Asilomar Conference  1360KB [IMG] 
+      on ignals, Systems and Computers, 1994. [8 pages]           5863KB [IMG] 
+
+  70. [Drucker et al., 1994]                                         [IMG]     
+                                                                   
+      H. Drucker, C. Cortes, L. D. Jackel, Y. LeCun, and V.                
+      Vapnik, "Boosting and Other Ensemble Methods," Neural        
+      Computation, vol. 6, no. 6, Nov. 1994. [8 pages]                     
+
+  69. [Bottou et al., 1994]                                              [IMG] 
+                                                                   
+      L. Bottou, C. Cortes, J.S. Denker, H. Drucker, I. Guyon,     61KB  [IMG] 
+      L.D. Jackel, Y. LeCun, U.A. Muller, E. Sackinger, P. Simard, 
+      and V. Vapnik, "Comparison of classifier methods: a case     213KB [IMG] 
+      study in handwritten digit recognition," in Proc. of the     
+      International Conference on Pattern Recognition, (IAPR,      151KB [IMG] 
+      ed.), (Jerusalem), pp. 77-82, Oct. 1994. [11 pages]          
+
+  68. [Simard and LeCun and Denker, 1994]                                [IMG] 
+                                                                   
+      P. Simard, Y. LeCun, and J. Denker, "Memory Based Character  99KB  [IMG] 
+      Recognition Using a Transformation Invariant Metric," in     
+      Proc. of the International Conference on Pattern             79KB  [IMG] 
+      Recognition, (IAPR, ed.), (Jerusalem), pp. 262-267, Oct.     
+      1994. [14 pages]                                             204KB [IMG] 
+
+  67. [LeCun and Bengio, 1994]                                           [IMG] 
+                                                                   
+      Y. LeCun and Y. Bengio, "word-level training of a            70KB  [IMG] 
+      handwritten word recognizer based on convolutional neural    
+      networks," in Proc. of the International Conference on       53KB  [IMG] 
+      Pattern Recognition, (IAPR, ed.), (Jerusalem), pp. 88-92,    
+      Oct. 1994. [5 pages]                                         171KB [IMG] 
+
+  66. [ Bengio and LeCun, 1994]                                          [IMG] 
+                                                                   
+      Y. Bengio and Y. LeCun, "word normalization for on-line      53KB  [IMG] 
+      handwritten word recognition," in Proc. of the International 
+      Conference on Pattern Recognition, (IAPR, ed.), (Jerusalem), 38KB  [IMG] 
+      pp. 409-413, Oct. 1994. [5 pages]                            139KB [IMG] 
+
+  65. [Vapnik and Levin and LeCun, 1994]                                 [IMG] 
+                                                                   
+      V. Vapnik, E. Levin, and Y. LeCun, "Measuring the            131KB [IMG] 
+      VC-dimension of a Learning Machine," Neural Computation,     87KB  [IMG] 
+      vol. 6, no. 5, pp. 851-876, 1994. [22 pages]                 286KB [IMG] 
+
+  64. [Bengio and LeCun and Henderson, 1993]                             [IMG] 
+                                                                   
+      Y. Bengio, Y. LeCun, and D. Henderson, "Globally Trained     63KB  [IMG] 
+      Handwritten Word Recognizer using Spatial Representation,    
+      Space Displacement Neural Networks and Hidden Markov         41KB  [IMG] 
+      Models," in Advances in Neural Information Processing        
+      Systems, vol. 6, (J. Cowan and G. Tesauro, eds.), 1993. [8   142KB [IMG] 
+      pages]                                                       
+
+  63. [Bromley et al., 1993]                                             [IMG] 
+                                                                  
+      J. Bromley, I. Guyon, Y. LeCun, E. Sackinger, and R. Shah,  114KB  [IMG] 
+      "Signature Verification using a Siamese Time Delay Neural   
+      Network," in Advances in Neural Information Processing      1671KB [IMG] 
+      Systems, vol. 6, (J. Cowan and G. Tesauro, eds.), 1993. [8  
+      pages]                                                      3372KB [IMG] 
+
+  62. [Drucker et al., 1994]                                         [IMG]     
+                                                                   
+      H. Drucker, C. Cortes, L. D. Jackel, Y. LeCun, and V.                
+      Vapnik, "Boosting and Other Ensemble Methods," in Proc of    
+      the 1994 Machine Learning conference, 1994. [8 pages]                
+
+  61. [Vaillant and Monrocq and LeCun, 1994]                             [IMG] 
+                                                                   
+      R. Vaillant, C. Monrocq, and Y. LeCun, "Original approach    161KB [IMG] 
+      for the localisation of objects in images," IEE Proc on      
+      Vision, Image, and Signal Processing, vol. 141, no. 4, pp.   406KB [IMG] 
+      245-250, Aug. 1994. [16 pages]                               235KB [IMG] 
+
+  60. [Vaillant and Monrocq and LeCun, 1993]                         [IMG]     
+                                                                   
+      R. Vaillant, C. Monrocq, and Y. LeCun, "An Original approach         
+      for the localisation of objects in images," in International 
+      Conference on Artificial Neural Networks, pp. 26-30, 1993.           
+      [16 pages]                                                   
+
+  59. [Burges et al., 1993]                                          [IMG]     
+                                                                   
+      C.J. Burges, J. Ben, J.S. Denker, and Y. and. Nohl C.R.              
+      LeCun, "Off Line Recognition of Handwritten Postal Words     
+      Using Neural Networks.," International Journal of Pattern            
+      Recognition and Artificial Intelligence, vol. 7, no. 4, pp.  
+      689-704, 1993. [16 pages]                                    
+
+  58. [Bromley et al., 1993]                                             [IMG] 
+                                                                   
+      J. Bromley, J. W. Bentz, L. Bottou, I. Guyon, Y. LeCun, C.   186KB [IMG] 
+      Moore, E. Sackinger, and R. Shah, "Signature Verification    
+      using a Siamese Time Delay Neural Network," International                
+      Journal of Pattern Recognition and Artificial Intelligence,  
+      vol. 7, no. 4, Aug. 1993. [22 pages]                                     
+
+  57. [LeCun et al., 1993]                                               [IMG] 
+                                                                   
+      Y. LeCun, Y. Bengio, D. Henderson, A. Weisbuch, H. Weissman, 43KB  [IMG] 
+      and Jackel L., "on-line handwriting recognition with neural  
+      networks: spatial representation versus temporal             40KB  [IMG] 
+      representation.," in Proc. International Conference on       
+      handwriting and drawing., 1993. [3 pages]                    111KB [IMG] 
+
+  56. [Wu et al., 1993]                                                  [IMG] 
+                                                                   
+      Q.Z. Wu, Y. LeCun, L. D. Jackel, and B.S. Jeng, "on-line     68KB  [IMG] 
+      recognition of limited vocabulary chinese character using    
+      multiple convolutional neural networks," in Proc. of the     185KB [IMG] 
+      1993 IEEE International Symposium on circuits and systems,   
+      pp. 2435-2438, 1993. [4 pages]                               171KB [IMG] 
+
+  55. [LeCun and Denker, 1992]                                           [IMG] 
+                                                                  
+      Yann LeCun and John S. Denker, "Natural versus Universal    100KB  [IMG] 
+      Probability Complexity, and Entropy," in IEEE Workshop on   1686KB [IMG] 
+      the Physics of Computation, pp. 122-127, 1992. [10 pages]   6911KB [IMG] 
+
+  54. [Simard and LeCun and Denker J., 1993]                             [IMG] 
+                                                                   
+      P. Simard, Y. LeCun, and Denker J., "efficient pattern       78KB  [IMG] 
+      recognition using a new transformation distance," in         
+      Advances in Neural Information Processing Systems, vol. 5,   66KB  [IMG] 
+      (S. Hanson, J. Cowan, and L. Giles, eds.), 1993. [9 pages]   164KB [IMG] 
+
+  53. [LeCun and Simard and Pearlmutter, 1993]                           [IMG] 
+                                                                   
+      Y. LeCun, P. Simard, and B. Pearlmutter, "Automatic learning 63KB  [IMG] 
+      rate maximization by on-line estimation of the Hessian's     
+      eigenvectors," in Advances in Neural Information Processing  57KB  [IMG] 
+      Systems, vol. 5, (S. Hanson, J. Cowan, and L. Giles, eds.),  
+      1993. [8 pages]                                              156KB [IMG] 
+
+  52. [LeCun et al., 1992]                                           [IMG]     
+                                                                   
+      Y. LeCun, B. Boser, J. S. Denker, D. Henderson, R. E.                
+      Howard, W. Hubbard, and L. D. Jackel, "Handwritten digit     
+      recognition with a back-propagation network," in Neural              
+      Netwotks, current applications, (Lisboa P.G.J., ed.), 1992.  
+      [8 pages]                                                    
+
+  51. [Simard et al., 1992]                                          [IMG]     
+                                                                   
+      P. Simard, Y. LeCun, J. Denker, and B. Victorri, "An                 
+      efficient algorithm for learning invariances in adaptive     
+      classifiers," in Proc. of International Conference on                
+      Pattern Recognition, The Hague, pp. 651-655, 1992. [8 pages] 
+
+  50. [Drucker and LeCun, 1992]                                          [IMG] 
+                                                                   
+      H. Drucker and Y LeCun, "Improving Generalization            174KB [IMG] 
+      Performance Using Double Backpropagation," IEEE Transaction  
+      on Neural Networks, vol. 3, no. 6, pp. 991-997, 1992. [7     570KB [IMG] 
+      pages]                                                       546KB [IMG] 
+
+  49. [Matan et al., 1992]                                               [IMG] 
+                                                                 
+      O. Matan, J. Bromley, C. Burges, J. Denker, L. Jackel, Y.  325KB   [IMG] 
+      LeCun, E Pednault, W. Satterfield, C Stenard, and T.       
+      Thompson, "Reading Handwritten Digits: A Zip Code          3529KB  [IMG] 
+      Recognition System.," IEEE Computer, vol. 25, no. 7, pp.   
+      59-63, July 1992. [33 pages]                               15723KB [IMG] 
+
+  48. [LeCun, 1992]                                                      [IMG] 
+                                                                  
+      Y. LeCun, "A theoretical framework for Back-Propagation,"   109KB  [IMG] 
+      in Artificial Neural Networks: concepts and theory, (P.     
+      Mehra and B. Wah, eds.), (Los Alamitos, CA), 1992. [8       1581KB [IMG] 
+      pages]                                                      6282KB [IMG] 
+
+  47. [LeCun et al., 1992]                                                     
+                                                                     [IMG]    
+      Y. LeCun, L. D. Jackel, B. Boser, J. S. Denker, H. P. Graf,  
+      I. Guyon, D. Henderson, R. E. Howard, and W. Hubbard,                
+      "Handwritten Digit Recognition: Applications of Neural Net   
+      Chips and Automatic Learning," in Artificial Neural                  
+      Networks, (E. Sanchez-Sinencio and C. Lau, eds.), pp.        
+      463-468, 1992. [8 pages]                                     
+
+  46. [Eduard Sackinger et al., 1992]                                    [IMG] 
+                                                                  
+      Eduard Sackinger, Bernhard Boser, Jane Bromley, Yann LeCun, 204KB  [IMG] 
+      and Lawrence D. Jackel, "Application of the ANNA Neural     
+      Network Chip to High-Speed Character Recognition," IEEE     2080KB [IMG] 
+      Transaction on Neural Networks, vol. 3, no. 2, pp. 498-505, 
+      Mar. 1992. [21 pages]                                       9108KB [IMG] 
+
+  45. [Boser et al., 1991]                                               [IMG] 
+                                                                  
+      B. Boser, E. Sackinger, J. Bromley, Y. LeCun, and L.        222KB  [IMG] 
+      Jackel, "An analog neural network processor with            
+      programmable topology," IEEE Journal of Solid-State         2229KB [IMG] 
+      Circuits, vol. 26, no. 12, pp. 2017-2025, Dec. 1991. [9     
+      pages]                                                      8321KB [IMG] 
+
+  44. [Boser et al., 1992]                                               [IMG] 
+                                                                   
+      B. Boser, E. Sackinger, J. Bromley, Y. LeCun, and L. Jackel, 313KB [IMG] 
+      "Hardware requirements for neural network pattern            
+      classifiers," IEEE Micro, vol. 12, no. 1, pp. 32-40, Feb.    777KB [IMG] 
+      1992. [9 pages]                                              774KB [IMG] 
+
+  43. [Ofer Matan et al., 1992]                                          [IMG] 
+                                                                   
+      Ofer Matan, Christopher J. C. Burges, Yann LeCun, and John   109KB [IMG] 
+      S. Denker, "Multi-Digit Recognition Using a Space            
+      Displacement Neural Network," in Neural Information          50KB  [IMG] 
+      Processing Systems, vol. 4, (J. M. Moody, S. J. Hanson, and  
+      R. P. Lippman, eds.), 1992. [8 pages]                        133KB [IMG] 
+
+  42. [Burges et al., 1992]                                              [IMG] 
+                                                                   
+      C. J. C. Burges, O. Matan, Y LeCun, J. S. Denker, L. D.      200KB [IMG] 
+      Jackel, C. E. Stenard, C. R. Nohl, and J. I. Ben, "Shortest  
+      path segmentation: A method for training a neural network to 534KB [IMG] 
+      recognize character strings," in Proceedings of the 1992     
+      International Joint Conference on Neural Networks,           527KB [IMG] 
+      (Baltimore, Maryland), pp. 165-172, 1992. [8 pages]          
+
+  41. [Simard and LeCun, 1992]                                           [IMG] 
+                                                                   
+      P. Simard and Y. LeCun, "Reverse TDNN: an architecture for   92KB  [IMG] 
+      trajectory generation," in Advances in Neural Information    
+      Processing Systems 4 (NIPS*91), (J. M. Moody, S. J. Hanson,  85KB  [IMG] 
+      and R. P. Lippman, eds.), (Denver, CO), 1992. [11 pages]     230KB [IMG] 
+
+  40. [Simard et al., 1992]                                              [IMG] 
+                                                                   
+      P. Simard, B. Victorri, Y. LeCun, and J. Denker, "Tangent    62KB  [IMG] 
+      Prop: a formalism for specifying selected invariances in     
+      adaptive networks," in Advances in Neural Information        57KB  [IMG] 
+      Processing Systems 4 (NIPS*91), (J. M. Moody, S. J. Hanson,  
+      and R. P. Lippman, eds.), (Denver, CO), 1992. [9 pages]      136KB [IMG] 
+
+  39. [Guyon et al., 1992]                                               [IMG] 
+                                                                   
+      I. Guyon, D. Henderson, P. Albrecht, Y. LeCun, and J.        186KB [IMG] 
+      Denker, "writer independentand writer adaptive neural        
+      network for on-line character recognition," in From Pixels               
+      to Features III: Frontiers in handwriting recognition, (S.   
+      Impedovo and J.C. Simon, eds.), pp. 493-506, 1992. [16                   
+      pages]                                                       
+
+  38. [Boser et al., 1991]                                               [IMG] 
+                                                                   
+      B.E. Boser, E. Sackinger, J. Bromley, Y. LeCun, R.E. Howard, 153KB [IMG] 
+      and L.D. Jackel, "An analog neural network processor and its 
+      application to high-speed character recognition," in         518KB [IMG] 
+      Proceedings of the International Joint Conference on Neural  
+      Networks, (Seattle, WA), pp. 415-420, July 1991. [6 pages]   524KB [IMG] 
+
+  37. [Drucker and LeCun, 1991]                                          [IMG] 
+                                                                  
+      H. Drucker and Y LeCun, "Improving Generalization           96KB   [IMG] 
+      Performance in Character Recognition," in Proceedings of    
+      the IEEE Workshop on Neural Networks for Signal Processing, 1119KB [IMG] 
+      pp. 198-207, 1991. [10 pages]                               4605KB [IMG] 
+
+  36. [Drucker and LeCun, 1991]                                          [IMG] 
+                                                                   
+      H. Drucker and Y LeCun, "Double Backpropagation: Increasing  95KB  [IMG] 
+      Generalization Performance," in Proceedings of the           
+      International Joint Conference on Neural Networks, (Seattle, 319KB [IMG] 
+      WA), pp. 145-150, July 1991. [6 pages]                       302KB [IMG] 
+
+  35. [Kanter and LeCun and Solla, 1991]                                 [IMG] 
+                                                                  
+      I. Kanter, Y. LeCun, and S. Solla, "Second-order properties 70KB   [IMG] 
+      of error surfaces: learning time and generalization," in    
+      Advances in Neural Information Processing Systems 3         1241KB [IMG] 
+      (NIPS*90), (R. Lippmann, J. Moody, and D. Touretzky, eds.), 
+      (Denver, CO), Apr. 1991. [7 pages]                          5301KB [IMG] 
+
+  34. [Denker and LeCun, 1991]                                           [IMG] 
+                                                                  
+      J. S. Denker and Y. LeCun, "transforming neural-net output  134KB  [IMG] 
+      levels to probability distributions," AT&T Bell             1945KB [IMG] 
+      Laboratories, 1991. [15 pages]                              8288KB [IMG] 
+
+  33. [Denker and LeCun, 1991]                                           [IMG] 
+                                                                   
+      J. S. Denker and Y. LeCun, "transforming neural-net output   87KB  [IMG] 
+      levels to probability distributions," in Advances in Neural  
+      Information Processing Systems 3 (NIPS*90), (R. Lippmann, J. 145KB [IMG] 
+      Moody, and D. Touretzky, eds.), (Denver, CO), Apr. 1991. [14 
+      pages]                                                       253KB [IMG] 
+
+  32. [Guyon et al., 1991]                                               [IMG] 
+                                                                  
+      I. Guyon, P. Albrecht, Y. LeCun, J. S. Denker, and Hubbard  293KB  [IMG] 
+      W., "design of a neural network character recognizer for a  
+      touch terminal," Pattern Recognition, vol. 24, no. 2, pp.   2581KB [IMG] 
+      105-119, 1991. [15 pages]                                                
+
+  31. [LeCun and Kanter and Solla, 1991]                                 [IMG] 
+                                                                  
+      Y. LeCun, I. Kanter, and S. Solla, "Eigenvalues of          72KB   [IMG] 
+      covariance matrices: application to neural-network          
+      learning," Physical Review Letters, vol. 66, no. 18, pp.    988KB  [IMG] 
+      2396-2399, May 1991. [4 pages]                              3807KB [IMG] 
+
+  30. [Solla and LeCun, 1991]                                            [IMG] 
+                                                                 
+      S. Solla and Y. LeCun, "Constrained Neural Networks for    186KB   [IMG] 
+      Pattern Recognition," in Neural Networks: Concepts,        
+      Applications and Implementations Vol IV, (P. Antognetti    2570KB  [IMG] 
+      and V. Milutinovic, eds.), pp. 142-161, 1991. [18 pages]   10297KB [IMG] 
+
+  29. [Howard et al., 1990]                                              [IMG] 
+                                                                   
+      R.E. Howard, B. Boser, J.S. Denker, H.P. Graf, D. Henderson, 157KB [IMG] 
+      W. Hubbard, L.D. Jackel, Y. Le Cun, and H. S. Baird,         
+      "Optical character recognition: a technology driver for      362KB [IMG] 
+      neural networks," in IEEE International Symposium on         
+      Circuits and Systems, 1990, pp. 2433-2436, 1990. [4 pages]   342KB [IMG] 
+
+  28. [Matan et al., 1990]                                               [IMG] 
+                                                                  
+      O. Matan, R. K. Kiang, C. E. Stenard, B. Boser, J. S.       80KB   [IMG] 
+      Denker, D. Henderson, R. E. Howard, W. Hubbard, L. D.       
+      Jackel, and Y. LeCun, "Handwritten character recognition    1085KB [IMG] 
+      using neural network architectures," in Proc. of the 4th US 
+      Postal Service Advanced Technology Conference, (Washington  4708KB [IMG] 
+      D.C.), Nov. 1990. [9 pages]                                 
+
+  27. [Guyon et al., 1990]                                           [IMG]     
+                                                                   
+      I. Guyon, P. Albrecht, Y. LeCun, J. S. Denker, and W.                
+      Hubbard, "A time delay neural network character recognizer   
+      for a touch terminal," in Proc. of the International Neural          
+      Network Conference, (Paris), June 1990. [9 pages]            
+
+  26. [LeCun et al., 1990]                                           [IMG]     
+                                                                   
+      Y. LeCun, L. D. Jackel, H. P. Graf, B. Boser, J. S. Denker,          
+      I. Guyon, D. Henderson, R. E. Howard, and S. Hubbard, Solla, 
+      "Optical Character Recognition and Neural-Net Chips," in             
+      Proc. of the International Neural Network Conference,        
+      (Paris), June 1990. [9 pages]                                
+
+  25. [LeCun et al., 1990]                                               [IMG] 
+                                                                   
+      Y. LeCun, O. Matan, B. Boser, J. S. Denker, D. Henderson, R. 177KB [IMG] 
+      E. Howard, W. Hubbard, L. D. Jackel, and H. S. Baird,        
+      "Handwritten Zip Code Recognition with Multilayer Networks," 511KB [IMG] 
+      in Proc. of the International Conference on Pattern          
+      Recognition, (IAPR, ed.), (Atlantic City), pp. 35-40, 1990.  491KB [IMG] 
+      [6 pages]                                                    
+
+  24. [LeCun et al., 1990]                                           [IMG]     
+                                                                   
+      Y. LeCun, B. Boser, J. S. Denker, D. Henderson, R. E.                
+      Howard, W. Hubbard, L. D. Jackel, and Baird H. S.,           
+      "Constrained Neural Network for Unconstrained Handwritten            
+      Digit Recognition," in Frontiers in Handwriting Recognition, 
+      (C Suen, ed.), (Montreal), 1990. [6 pages]                   
+
+  23. [LeCun et al., 1990]                                               [IMG] 
+                                                                   
+      Y. LeCun, B. Boser, J. S. Denker, D. Henderson, R. E.        75KB  [IMG] 
+      Howard, W. Hubbard, and L. D. Jackel, "Handwritten digit     
+      recognition with a back-propagation network," in Advances in 82KB  [IMG] 
+      Neural Information Processing Systems 2 (NIPS*89), (David    
+      Touretzky, ed.), (Denver, CO), 1990. [9 pages]               200KB [IMG] 
+
+  22. [LeCun et al., 1990]                                               [IMG] 
+                                                                   
+      Yann LeCun, J. S. Denker, S. Solla, R. E. Howard, and L. D.  53KB  [IMG] 
+      Jackel, "Optimal Brain Damage," in Advances in Neural        
+      Information Processing Systems 2 (NIPS*89), (David           45KB  [IMG] 
+      Touretzky, ed.), (Denver, CO), 1990. [8 pages]               118KB [IMG] 
+
+  21. [Jackel et al., 1990]                                              [IMG] 
+                                                                   
+      L.D. Jackel, B. Boser, J.S. Denker, H.P. Graf, Y. Le Cun, I. 171KB [IMG] 
+      Guyon, D. Henderson, R.E. Howard, W. Hubbard, and S.A.       
+      Solla, "Hardware requirements for neural-net optical         508KB [IMG] 
+      character recognition," in Proc. of the International Joint  
+      Conference on Neural Networks, pp. 855-861, 1990. [7 pages]  486KB [IMG] 
+
+  20. [Jackel et al., 1990]                                              [IMG] 
+                                                                   
+      L. Jackel, B. Boser, H.-P. Graf, J. Denker, Y. LeCun, D.     122KB [IMG] 
+      Henderson, O. Matan, R. Howard, and H. Baird, "VLSI          
+      Implementation of Electronic Neural Networks: and Example in 347KB [IMG] 
+      Character Recognition," in IEEE International Conference on  
+      Systems, Man, and Cybernetics, (IEEE, ed.), (Los Angeles,    328KB [IMG] 
+      CA), pp. 320-322, Nov. 1990. [3 pages]                       
+
+  19. [LeCun et al., 1989]                                               [IMG] 
+                                                                  
+      Y. LeCun, B. Boser, J. S. Denker, D. Henderson, R. E.       103KB  [IMG] 
+      Howard, W. Hubbard, and L. D. Jackel, "Backpropagation      
+      Applied to Handwritten Zip Code Recognition," Neural        1302KB [IMG] 
+      Computation, vol. 1, no. 4, pp. 541-551, Winter 1989. [11   
+      pages]                                                      5529KB [IMG] 
+
+  18. [LeCun et al., 1989]                                                     
+                                                                     [IMG]    
+      Y. LeCun, L. D. Jackel, B. Boser, J. S. Denker, H. P. Graf,  
+      I. Guyon, D. Henderson, R. E. Howard, and W. Hubbard,                
+      "Handwritten Digit Recognition: Applications of Neural Net      
+      Chips and Automatic Learning," in Neurocomputing,            
+      Algorithms, Architectures and Applications, (F. Fogelman, J.         
+      Herault, and Y. Burnod, eds.), (Les Arcs, France), 1989. [11 
+      pages]                                                       
+
+  17. [LeCun et al., 1989]                                               [IMG] 
+                                                                  
+      Y. LeCun, L. D. Jackel, B. Boser, J. S. Denker, H. P. Graf, 136KB  [IMG] 
+      I. Guyon, D. Henderson, R. E. Howard, and W. Hubbard,       
+      "Handwritten Digit Recognition: Applications of Neural Net  1509KB [IMG] 
+      Chips and Automatic Learning," IEEE Communication, pp.      
+      41-46, Nov. 1989. [5 pages]                                 1041KB [IMG] 
+
+  16. [LeCun and Galland and Hinton. Geoffrey E., 1989]                  [IMG] 
+                                                                  
+      Yann LeCun, Conrad C. Galland, and Hinton. Geoffrey E.,     95KB   [IMG] 
+      "GEMINI: Gradient estimation through matrix inversion after 
+      noise injection," in Advances in Neural Information         1572KB [IMG] 
+      Processing Systems 1 (NIPS*88), (David Touretzky, ed.),     
+      (Denver, CO), 1989. [8 pages]                               6391KB [IMG] 
+
+  15. [LeCun, 1989]                                                  [IMG]     
+                                                                   
+      Y. LeCun, "Generalization and Network Design Strategies," in         
+      Connectionism in Perspective, (R. Pfeifer, Z. Schreter, F.   
+      Fogelman, and L. Steels, eds.), (Zurich, Switzerland), 1989.         
+      [8 pages]                                                    
+
+  14. [LeCun, 1989]                                                      [IMG] 
+                                                                  
+      Y. LeCun, "Generalization and Network Design Strategies,"   167KB  [IMG] 
+      Department of Computer Science, University of Toronto,      2268KB [IMG] 
+      1989. [20 pages]                                            9613KB [IMG] 
+
+  13. [LeCun, 1988]                                                      [IMG] 
+                                                                  
+      Y. LeCun, "A theoretical framework for Back-Propagation,"   109KB  [IMG] 
+      in Proceedings of the 1988 Connectionist Models Summer      
+      School, (D. Touretzky, G. Hinton, and T. Sejnowski, eds.),  1581KB [IMG] 
+      (CMU, Pittsburgh, Pa), pp. 21-28, 1988. [8 pages]           6282KB [IMG] 
+
+  12. [LeCun and Bottou, 1988]                                       [IMG]     
+                                                                   
+      Y. LeCun and Leon-Yves Bottou, "SN: A Simulator For                  
+      Connectionist Models", Mar. 1988. [8 pages]                          
+
+  11. [Becker and LeCun, 1989]                                           [IMG] 
+                                                                  
+      S. Becker and Y. LeCun, "Improving the Convergence of       153KB  [IMG] 
+      Back-Propagation Learning with Second-Order Methods," in    
+      Proc. of the 1988 Connectionist Models Summer School, (D.   1997KB [IMG] 
+      Touretzky, G. Hinton, and T. Sejnowski, eds.), (San Mateo), 
+      pp. 29-37, 1989. [10 pages]                                 7962KB [IMG] 
+
+  10. [Bottou and LeCun, 1988]                                       [IMG]     
+                                                                   
+      L.-Y. Bottou and Y. LeCun, "SN: A Simulator for                      
+      Connectionist Models," in Proceedings of NeuroNimes 88,      
+      (Nimes, France), 1988. [10 pages]                                    
+
+  9. [LeCun, 1987]                                                       [IMG] 
+                                                                  2482KB [IMG] 
+     Y. LeCun, "Modeles connexionnistes de l'apprentissage        9227KB [IMG] 
+     (connectionist learning models)", June 1987. [277 pages]                  
+
+  8. [LeCun and Fogelman-Soulie, 1987]                                   [IMG] 
+                                                                  
+     Y. LeCun and F. Fogelman-Soulie, "Modeles connexionnistes de 469KB  [IMG] 
+     l'apprentissage," Intellectica, special issue apprentissage  3078KB [IMG] 
+     et machine, Mar. 1987. [16 pages]                                         
+
+  7. [{Fogelman-Soulie} et al., 1987]                                    [IMG] 
+                                                                  
+     F. Fogelman-Soulie, P. Gallinari, Y. LeCun, and S. Thiria,   694KB  [IMG] 
+     "Automata networks and artificial intelligence," in Automata 
+     networks in computer science, theory and applications, pp.   8954KB [IMG] 
+     133-186, 1987. [61 pages]                                                 
+
+  6. [Gallinari et al., 1987]                                            [IMG] 
+                                                                  
+     P. Gallinari, Y. LeCun, S. Thiria, and Fogelman-Soulie F.,   161KB  [IMG] 
+     "Memoires associatives distribuees: une comparaison          
+     (distributed associative memories: a comparison)," in        1637KB [IMG] 
+     Proceedings of COGNITIVA 87, ( Paris, La Villette),          
+     Cesta-Afcet, May 1987. [8 pages]                             6325KB [IMG] 
+
+  5. [{Fogelman-Soulie} et al., 1987]                                [IMG]     
+                                                                   
+     F. Fogelman-Soulie, P. Gallinari, Y. LeCun, and S. Thiria,            
+     "generalization using back-propagation," in Proc. of the      
+     first International Conference on Neural Networks, (San               
+     Diego, California), IEEE, June 1987. [8 pages]                
+
+  4. [{Fogelman-Soulie} et al., 1987]                                [IMG]     
+                                                                   
+     F. Fogelman-Soulie, P. Gallinari, Y. LeCun, and S. Thiria,            
+     "Learning on automata networks," in Proc. of Congres          
+     d'Intelligence Artificielle de Marseille, (Marseille,                 
+     France), IIRIAM, 1987. [8 pages]                              
+
+  3. [LeCun, 1986]                                                       [IMG] 
+                                                                  
+     Y. LeCun, "Learning Processes in an Asymmetric Threshold     122KB  [IMG] 
+     Network," in Disordered systems and biological organization, 
+     (E. Bienenstock, F. Fogelman-Soulie, and G. Weisbuch, eds.), 1567KB [IMG] 
+     (Les Houches, France), pp. 233-240, 1986. [8 pages]          6108KB [IMG] 
+
+  2. [LeCun, 1985]                                                       [IMG] 
+                                                                  
+     Y. LeCun, "Une procedure d'apprentissage pour reseau a seuil 126KB  [IMG] 
+     asymmetrique (a Learning Scheme for Asymmetric Threshold     
+     Networks)," in Proceedings of Cognitiva 85, (Paris, France), 1086KB [IMG] 
+     pp. 599-604, 1985. [6 pages]                                 4387KB [IMG] 
+
+  1. [LeCun and Metsu, 1983]                                         [IMG]     
+                                                                   
+     Y. LeCun and P. Metsu, "Contribution a la conception d'une            
+     famille de circuits VLSIde traitement du signal (contribution 
+     to the design of a family of signal processing VLSI                   
+     circuits," ESIEE, Paris, June 1983. [6 pages]                 
+

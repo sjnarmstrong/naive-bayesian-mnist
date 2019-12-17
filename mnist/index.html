@@ -1,0 +1,1804 @@
+<HTML>
+<HEAD>
+   <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+   <TITLE>MNIST handwritten digit database, Yann LeCun and Corinna Cortes</TITLE>
+</HEAD>
+<BODY BGCOLOR="#FFFFFF" LINK="#FF0000" VLINK="#820594" ALINK="#111111" BACKGROUND="wm5b.gif">
+
+<CENTER>
+<H1>
+<FONT COLOR="#FF0000"><FONT SIZE=+4>THE MNIST DATABASE</FONT></FONT></H1></CENTER>
+
+<CENTER><FONT COLOR="#FF0000"><FONT SIZE=+4>of handwritten digits</FONT></FONT></CENTER>
+
+<CENTER><FONT COLOR="#FF0000"><FONT SIZE=+4></FONT></FONT></CENTER>
+
+<CENTER><FONT COLOR="#3366FF"><FONT SIZE=+1><a href="http://yann.lecun.com">Yann LeCun</a>, Courant Institute, NYU</FONT></FONT></CENTER>
+<CENTER><FONT COLOR="#3366FF"><FONT SIZE=+1><a href="http://homepage.mac.com/corinnacortes/">Corinna Cortes</a>, Google Labs, New York</FONT></FONT></CENTER>
+
+<CENTER>&nbsp;</CENTER>
+The MNIST database of handwritten digits, available from this page, has a
+training set of 60,000 examples, and a test set of 10,000 examples. It
+is a subset of a larger set available from NIST. The digits have
+been size-normalized and centered in a fixed-size image.
+<P>
+It is a good database for people who want to try learning techniques
+and pattern recognition methods on real-world data while spending minimal
+efforts on preprocessing and formatting.
+<P>
+Four files are available on this site:
+
+<P><TT><A HREF="train-images-idx3-ubyte">train-images-idx3-ubyte</A>:&nbsp;
+training set images</TT>
+<BR><TT><A HREF="train-labels-idx1-ubyte">train-labels-idx1-ubyte</A>:&nbsp;
+training set labels</TT>
+<BR><TT><A HREF="t10k-images-idx3-ubyte">t10k-images-idx3-ubyte</A>:&nbsp;&nbsp;
+test set images</TT>
+<BR><TT><A HREF="t10k-labels-idx1-ubyte">t10k-labels-idx1-ubyte</A>:&nbsp;&nbsp;
+test set labels</TT>
+<p>
+These files are not in any standard image format. You have to write
+your own (very simple) program to read them. The file format is described
+at the bottom of this page.
+<P>
+The original black and white (bilevel) images from NIST were size normalized
+to fit in a 20x20 pixel box while preserving their aspect ratio. The resulting
+images contain grey levels as a result of the anti-aliasing technique used
+by the normalization algorithm. the images were centered in a 28x28 image
+by computing the center of mass of the pixels, and translating the image
+so as to position this point at the center of the 28x28 field.
+<p>
+With some classification methods (particuarly template-based methods,
+such as SVM and K-nearest neighbors), the error rate improves when the
+digits are centered by bounding box rather than center of mass. If you
+do this kind of pre-processing, you should report it in your
+publications.
+<P>
+The MNIST database was constructed from NIST's Special Database 3 and
+Special Database 1 which contain binary images of handwritten digits. NIST
+originally designated SD-3 as their training set and SD-1 as their test
+set. However, SD-3 is much cleaner and easier to recognize than SD-1. The
+reason for this can be found on the fact that SD-3 was collected among
+Census Bureau employees, while SD-1 was collected among high-school students.
+Drawing sensible conclusions from learning experiments requires that the
+result be independent of the choice of training set and test among the
+complete set of samples. Therefore it was necessary to build a new database
+by mixing NIST's datasets.
+<P>
+The MNIST training set is composed of 30,000 patterns from SD-3 and
+30,000 patterns from SD-1. Our test set was composed of 5,000 patterns
+from SD-3 and 5,000 patterns from SD-1. The 60,000 pattern training set
+contained examples from approximately 250 writers. We made sure that the
+sets of writers of the training set and test set were disjoint.
+<P>
+SD-1 contains 58,527 digit images written by 500 different writers.
+In contrast to SD-3, where blocks of data from each writer appeared in
+sequence, the data in SD-1 is scrambled. Writer identities for SD-1 is
+available and we used this information to unscramble the writers. We then
+split SD-1 in two: characters written by the first 250 writers went into
+our new training set. The remaining 250 writers were placed in our test
+set. Thus we had two sets with nearly 30,000 examples each. The new training
+set was completed with enough examples from SD-3, starting at pattern #
+0, to make a full set of 60,000 training patterns. Similarly, the new test
+set was completed with SD-3 examples starting at pattern # 35,000 to make
+a full set with 60,000 test patterns. Only a subset of 10,000 test images
+(5,000 from SD-1 and 5,000 from SD-3) is available on this site. The full
+60,000 sample training set is available.
+<P>
+Many methods have been tested with this training set and test set. Here
+are a few examples. Details about the methods are given in an upcoming
+paper. Some of those experiments used a version of the database where the
+input images where deskewed (by computing the principal axis of the shape
+that is closest to the vertical, and shifting the lines so as to make it
+vertical). In some other experiments, the training set was augmented with
+artificially distorted versions of the original training samples. The distortions
+are random combinations of shifts, scaling, skewing, and compression.
+<BR>&nbsp;
+
+
+<table border=1 cellpadding=3>
+<tr><td>CLASSIFIER</td>
+ <td>PREPROCESSING</td>
+ <td align=right>TEST ERROR RATE (%)</td>
+ <td>Reference</td></tr>
+
+<tr><td>linear classifier (1-layer NN)</td>
+  <td>none</td>
+  <td align=right>12.0</td>
+  <td><a href="http://yann.lecun.com/exdb/publis/index.html#lecun-98">LeCun et al. 1998</a></td></tr>
+<tr><td>linear classifier (1-layer NN)</td>
+  <td>deskewing</td>
+  <td align=right>8.4</td>
+  <td><a href="http://yann.lecun.com/exdb/publis/index.html#lecun-98">LeCun et al. 1998</a></td></tr>
+<tr><td>pairwise linear classifier</td>
+  <td>deskewing</td>
+  <td align=right>7.6</td>
+  <td><a href="http://yann.lecun.com/exdb/publis/index.html#lecun-98">LeCun et al. 1998</a></td></tr>
+<tr><td>K-nearest-neighbors, Euclidean (L2)</td>
+  <td>none</td>
+  <td align=right>5.0</td>
+  <td><a href="http://yann.lecun.com/exdb/publis/index.html#lecun-98">LeCun et al. 1998</a></td></tr>
+<tr><td>K-nearest-neighbors, Euclidean (L2)</td>
+  <td>none</td>
+  <td align=right>3.09</td>
+  <td><a href="http://finmath.uchicago.edu/~wilder/Mnist/">Kenneth Wilder, U. Chicago</a></td></tr>
+<tr><td>K-nearest-neighbors, L3</td>
+  <td>none</td>
+  <td align=right>2.83</td>
+  <td><a href="http://finmath.uchicago.edu/~wilder/Mnist/">Kenneth Wilder, U. Chicago</a></td></tr>
+<tr><td>K-nearest-neighbors, Euclidean (L2)</td>
+  <td>deskewing</td>
+  <td align=right>2.4</td>
+  <td><a href="http://yann.lecun.com/exdb/publis/index.html#lecun-98">LeCun et al. 1998</a></td></tr>
+<tr><td>K-nearest-neighbors, Euclidean (L2)</td>
+  <td>deskewing, noise removal, blurring</td>
+  <td align=right>1.80</td>
+  <td><a href="http://finmath.uchicago.edu/~wilder/Mnist/">Kenneth Wilder, U. Chicago</a></td></tr>
+<tr><td>K-nearest-neighbors, L3</td>
+  <td>deskewing, noise removal, blurring</td>
+  <td align=right>1.73</td>
+  <td><a href="http://finmath.uchicago.edu/~wilder/Mnist/">Kenneth Wilder, U. Chicago</a></td></tr>
+<tr><td>K-nearest-neighbors, L3</td>
+  <td>deskewing, noise removal, blurring, 1 pixel shift</td>
+  <td align=right>1.33</td>
+  <td><a href="http://finmath.uchicago.edu/~wilder/Mnist/">Kenneth Wilder, U. Chicago</a></td></tr>
+<tr><td>K-nearest-neighbors, L3</td>
+  <td>deskewing, noise removal, blurring, 2 pixel shift</td>
+  <td align=right>1.22</td>
+  <td><a href="http://finmath.uchicago.edu/~wilder/Mnist/">Kenneth  Wilder, U. Chicago</a></td></tr>
+<tr><td>K-NN, shape context matching</td>
+  <td>shape context feature extraction</td>
+  <td align=right>0.63</td>
+  <td><a href="http://http.cs.berkeley.edu/projects/vision/shape/">Belongie et al. IEEE PAMI 2002</a></td></tr>
+<tr><td>40 PCA + quadratic classifier</td>
+  <td>none</td>
+  <td align=right>3.3</td>
+  <td><a href="http://yann.lecun.com/exdb/publis/index.html#lecun-98">LeCun et al. 1998</a></td></tr>
+<tr><td>1000 RBF + linear classifier</td>
+  <td>none</td>
+  <td align=right>3.6</td>
+  <td><a href="http://yann.lecun.com/exdb/publis/index.html#lecun-98">LeCun et al. 1998</a></td></tr>
+<tr><td>K-NN, Tangent Distance</td>
+  <td>subsampling to 16x16 pixels</td>
+  <td align=right>1.1</td>
+  <td><a href="http://yann.lecun.com/exdb/publis/index.html#lecun-98">LeCun et al. 1998</a></td></tr>
+<tr><td>SVM, Gaussian Kernel</td>
+  <td>none</td>
+  <td align=right>1.4</td>
+  <td></td></tr>
+<tr><td>SVM deg 4 polynomial</td>
+  <td>deskewing</td>
+  <td align=right>1.1</td>
+  <td><a href="http://yann.lecun.com/exdb/publis/index.html#lecun-98">LeCun et al. 1998</a></td></tr>
+<tr><td>Reduced Set SVM deg 5 polynomial</td>
+  <td>deskewing</td>
+  <td align=right>1.0</td>
+  <td><a href="http://yann.lecun.com/exdb/publis/index.html#lecun-98">LeCun et al. 1998</a></td></tr>
+<tr><td>Virtual SVM deg-9 poly [distortions]</td>
+  <td>none</td>
+  <td align=right>0.8</td>
+  <td><a href="http://yann.lecun.com/exdb/publis/index.html#lecun-98">LeCun et al. 1998</a></td></tr>
+<tr><td>Virtual SVM, deg-9 poly, 1-pixel jittered</td>
+  <td>none</td>
+  <td align=right>0.68</td>
+  <td>DeCoste and Scholkopf, MLJ 2002</td></tr>
+<tr><td>Virtual SVM, deg-9 poly, 1-pixel jittered</td>
+  <td>deskewing</td>
+  <td align=right>0.68</td>
+  <td>DeCoste and Scholkopf, MLJ 2002</td></tr>
+<tr><td>Virtual SVM, deg-9 poly, 2-pixel jittered</td>
+  <td>deskewing</td>
+  <td align=right>0.56</td>
+  <td>DeCoste and Scholkopf, MLJ 2002</td></tr>
+<tr><td>2-layer NN, 300 hidden units, mean square error</td>
+  <td>none</td>
+  <td align=right>4.7</td>
+  <td><a href="http://yann.lecun.com/exdb/publis/index.html#lecun-98">LeCun et al. 1998</a></td></tr>
+<tr><td>2-layer NN, 300 HU, MSE, [distortions]</td>
+  <td>none</td>
+  <td align=right>3.6</td>
+  <td><a href="http://yann.lecun.com/exdb/publis/index.html#lecun-98">LeCun et al. 1998</a></td></tr>
+<tr><td>2-layer NN, 300 HU</td>
+  <td>deskewing</td>
+  <td align=right>1.6</td>
+  <td><a href="http://yann.lecun.com/exdb/publis/index.html#lecun-98">LeCun et al. 1998</a></td></tr>
+<tr><td>2-layer NN, 1000 hidden units</td>
+  <td>none</td>
+  <td align=right>4.5</td>
+  <td><a href="http://yann.lecun.com/exdb/publis/index.html#lecun-98">LeCun et al. 1998</a></td></tr>
+<tr><td>2-layer NN, 1000 HU, [distortions]</td>
+  <td>none</td>
+  <td align=right>3.8</td>
+  <td><a href="http://yann.lecun.com/exdb/publis/index.html#lecun-98">LeCun et al. 1998</a></td></tr>
+<tr><td>3-layer NN, 300+100 hidden units</td>
+  <td>none</td>
+  <td align=right>3.05</td>
+  <td><a href="http://yann.lecun.com/exdb/publis/index.html#lecun-98">LeCun et al. 1998</a></td></tr>
+<tr><td>3-layer NN, 300+100 HU [distortions]</td>
+  <td>none</td>
+  <td align=right>2.5</td>
+  <td><a href="http://yann.lecun.com/exdb/publis/index.html#lecun-98">LeCun et al. 1998</a></td></tr>
+<tr><td>3-layer NN, 500+150 hidden units</td>
+  <td>none</td>
+  <td align=right>2.95</td>
+  <td><a href="http://yann.lecun.com/exdb/publis/index.html#lecun-98">LeCun et al. 1998</a></td></tr>
+<tr><td>3-layer NN, 500+150 HU [distortions]</td>
+  <td>none</td>
+  <td align=right>2.45</td>
+  <td><a href="http://yann.lecun.com/exdb/publis/index.html#lecun-98">LeCun et al. 1998</a></td></tr>
+<tr><td>3-layer NN, 500+300 HU, softmax, cross entropy, weight decay</td>
+  <td>none</td>
+  <td align=right>1.53</td>
+  <td><a href="http://www.cs.toronto.edu/~hinton/">Hinton, unpublished, 2005</a></td></tr>
+<tr><td>2-layer NN, 800 HU, Cross-Entropy Loss</td>
+  <td>none</td>
+  <td align=right>1.6</td>
+  <td><a href="http://research.microsoft.com/~patrice/publi.html">Simard et al., ICDAR 2003</a></td></tr>
+<tr><td>2-layer NN, 800 HU, cross-entropy [affine distortions]</td>
+  <td>none</td>
+  <td align=right>1.1</td>
+  <td><a href="http://research.microsoft.com/~patrice/publi.html">Simard et al., ICDAR 2003</a></td></tr>
+<tr><td>2-layer NN, 800 HU, MSE [elastic distortions]</td>
+  <td>none</td>
+  <td align=right>0.9</td>
+  <td><a href="http://research.microsoft.com/~patrice/publi.html">Simard et al., ICDAR 2003</a></td></tr>
+<tr><td>2-layer NN, 800 HU, cross-entropy [elastic distortions]</td>
+  <td>none</td>
+  <td align=right>0.7</td>
+  <td><a href="http://research.microsoft.com/~patrice/publi.html">Simard et al., ICDAR 2003</a></td></tr>
+<tr><td>Convolutional net LeNet-1</td>
+  <td>subsampling to 16x16 pixels</td>
+  <td align=right>1.7</td>
+  <td><a href="http://yann.lecun.com/exdb/publis/index.html#lecun-98">LeCun et al. 1998</a></td></tr>
+<tr><td>Convolutional net LeNet-4</td>
+  <td>none</td>
+  <td align=right>1.1</td>
+  <td><a href="http://yann.lecun.com/exdb/publis/index.html#lecun-98">LeCun et al. 1998</a></td></tr>
+<tr><td>Convolutional net LeNet-4 with K-NN instead of last layer</td>
+  <td>none</td>
+  <td align=right>1.1</td>
+  <td><a href="http://yann.lecun.com/exdb/publis/index.html#lecun-98">LeCun et al. 1998</a></td></tr>
+<tr><td>Convolutional net LeNet-4 with local learning instead of last layer</td>
+  <td>none</td>
+  <td align=right>1.1</td>
+  <td><a href="http://yann.lecun.com/exdb/publis/index.html#lecun-98">LeCun et al. 1998</a></td></tr>
+<tr><td>Convolutional net LeNet-5, [no distortions]</td>
+  <td>none</td>
+  <td align=right>0.95</td>
+  <td><a href="http://yann.lecun.com/exdb/publis/index.html#lecun-98">LeCun et al. 1998</a></td></tr>
+<tr><td>Convolutional net LeNet-5, [huge distortions]</td>
+  <td>none</td>
+  <td align=right>0.85</td>
+  <td><a href="http://yann.lecun.com/exdb/publis/index.html#lecun-98">LeCun et al. 1998</a></td></tr>
+<tr><td>Convolutional net LeNet-5, [distortions]</td>
+  <td>none</td>
+  <td align=right>0.8</td>
+  <td><a href="http://yann.lecun.com/exdb/publis/index.html#lecun-98">LeCun et al. 1998</a></td></tr>
+<tr><td>Convolutional net Boosted LeNet-4, [distortions]</td>
+  <td>none</td>
+  <td align=right>0.7</td>
+  <td><a href="http://yann.lecun.com/exdb/publis/index.html#lecun-98">LeCun et al. 1998</a></td></tr>
+<tr><td>Convolutional net, cross-entropy [affine distortions]</td>
+  <td>none</td>
+  <td align=right>0.6</td>
+  <td><a href="http://research.microsoft.com/~patrice/publi.html">Simard et al., ICDAR 2003</a></td></tr>
+<tr><td>Convolutional net, cross-entropy [elastic distortions]</td>
+  <td>none</td>
+  <td align=right>0.4</td>
+  <td><a href="http://research.microsoft.com/~patrice/publi.html">Simard et al., ICDAR 2003</a></td></tr>
+</table>
+
+<H3><FONT COLOR="#3333FF">References</FONT></H3>
+
+<DL>
+
+<DT><A NAME="lecun-98">[LeCun et al., 1998a]</A><DD>Y. LeCun, L. Bottou,
+  Y. Bengio, and P. Haffner. "Gradient-based learning applied to document recognition."
+<CITE>Proceedings of the IEEE</CITE>, 86(11):2278-2324, November 1998.
+<A HREF="../publis/index.html#lecun-98">[on-line version]</a>
+
+<DT>
+
+</DL>
+
+<H2><HR WIDTH="100%"></H2>
+
+<H2>
+<FONT COLOR="#3333FF">FILE FORMATS FOR THE MNIST DATABASE</FONT></H2>
+The data is stored in a very simple file format designed for storing vectors
+and multidimensional matrices. General info on this format is given at
+the end of this page, but you don't need to read that to use the data files.
+
+<P>All the integers in the files are stored in the MSB first (high endian)
+format used by most non-Intel processors. Users of Intel processors and
+other low-endian machines must flip the bytes of the header.
+
+<P>There are 4 files:<TT></TT>
+
+<P><TT>train-images-idx3-ubyte: training set images</TT>
+<BR><TT>train-labels-idx1-ubyte: training set labels</TT>
+<BR><TT>t10k-images-idx3-ubyte:&nbsp; test set images</TT>
+<BR><TT>t10k-labels-idx1-ubyte:&nbsp; test set labels</TT>
+
+<P>The training set contains 60000 examples, and the test set 10000 examples.
+
+<P>The first 5000 examples of the test set are taken from the original
+NIST training set. The last 5000 are taken from the original NIST test
+set. The first 5000 are cleaner and easier than the last 5000.
+<H3>
+TRAINING SET LABEL FILE (train-labels-idx1-ubyte):</H3>
+<TT>[offset] [type]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+[value]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; [description]</TT>
+<BR><TT>0000&nbsp;&nbsp;&nbsp;&nbsp; 32 bit integer&nbsp; 0x00000801(2049)
+magic number (MSB first)</TT>
+<BR><TT>0004&nbsp;&nbsp;&nbsp;&nbsp; 32 bit integer&nbsp; 60000&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+number of items</TT>
+<BR><TT>0008&nbsp;&nbsp;&nbsp;&nbsp; unsigned byte&nbsp;&nbsp; ??&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+label</TT>
+<BR><TT>0009&nbsp;&nbsp;&nbsp;&nbsp; unsigned byte&nbsp;&nbsp; ??&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+label</TT>
+<BR><TT>........</TT>
+<BR><TT>xxxx&nbsp;&nbsp;&nbsp;&nbsp; unsigned byte&nbsp;&nbsp; ??&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+label</TT>
+
+<P><TT>The labels values are 0 to 9.</TT>
+<H3>
+TRAINING SET IMAGE FILE (train-images-idx3-ubyte):</H3>
+<TT>[offset] [type]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+[value]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; [description]</TT>
+<BR><TT>0000&nbsp;&nbsp;&nbsp;&nbsp; 32 bit integer&nbsp; 0x00000803(2051)
+magic number</TT>
+<BR><TT>0004&nbsp;&nbsp;&nbsp;&nbsp; 32 bit integer&nbsp; 60000&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+number of images</TT>
+<BR><TT>0008&nbsp;&nbsp;&nbsp;&nbsp; 32 bit integer&nbsp; 28&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+number of rows</TT>
+<BR><TT>0012&nbsp;&nbsp;&nbsp;&nbsp; 32 bit integer&nbsp; 28&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+number of columns</TT>
+<BR><TT>0016&nbsp;&nbsp;&nbsp;&nbsp; unsigned byte&nbsp;&nbsp; ??&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+pixel</TT>
+<BR><TT>0017&nbsp;&nbsp;&nbsp;&nbsp; unsigned byte&nbsp;&nbsp; ??&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+pixel</TT>
+<BR><TT>........</TT>
+<BR><TT>xxxx&nbsp;&nbsp;&nbsp;&nbsp; unsigned byte&nbsp;&nbsp; ??&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+pixel</TT>
+
+<P>Pixels are organized row-wise. Pixel values are 0 to 255. 0 means background
+(white), 255 means foreground (black).
+<H3>
+TEST SET LABEL FILE (t10k-labels-idx1-ubyte):</H3>
+<TT>[offset] [type]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+[value]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; [description]</TT>
+<BR><TT>0000&nbsp;&nbsp;&nbsp;&nbsp; 32 bit integer&nbsp; 0x00000801(2049)
+magic number (MSB first)</TT>
+<BR><TT>0004&nbsp;&nbsp;&nbsp;&nbsp; 32 bit integer&nbsp; 10000&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+number of items</TT>
+<BR><TT>0008&nbsp;&nbsp;&nbsp;&nbsp; unsigned byte&nbsp;&nbsp; ??&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+label</TT>
+<BR><TT>0009&nbsp;&nbsp;&nbsp;&nbsp; unsigned byte&nbsp;&nbsp; ??&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+label</TT>
+<BR><TT>........</TT>
+<BR><TT>xxxx&nbsp;&nbsp;&nbsp;&nbsp; unsigned byte&nbsp;&nbsp; ??&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+label</TT>
+
+<P>The labels values are 0 to 9.
+<H3>
+TEST SET IMAGE FILE (t10k-images-idx3-ubyte):</H3>
+<TT>[offset] [type]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+[value]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; [description]</TT>
+<BR><TT>0000&nbsp;&nbsp;&nbsp;&nbsp; 32 bit integer&nbsp; 0x00000803(2051)
+magic number</TT>
+<BR><TT>0004&nbsp;&nbsp;&nbsp;&nbsp; 32 bit integer&nbsp; 10000&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+number of images</TT>
+<BR><TT>0008&nbsp;&nbsp;&nbsp;&nbsp; 32 bit integer&nbsp; 28&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+number of rows</TT>
+<BR><TT>0012&nbsp;&nbsp;&nbsp;&nbsp; 32 bit integer&nbsp; 28&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+number of columns</TT>
+<BR><TT>0016&nbsp;&nbsp;&nbsp;&nbsp; unsigned byte&nbsp;&nbsp; ??&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+pixel</TT>
+<BR><TT>0017&nbsp;&nbsp;&nbsp;&nbsp; unsigned byte&nbsp;&nbsp; ??&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+pixel</TT>
+<BR><TT>........</TT>
+<BR><TT>xxxx&nbsp;&nbsp;&nbsp;&nbsp; unsigned byte&nbsp;&nbsp; ??&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+pixel</TT>
+
+<P>Pixels are organized row-wise. Pixel values are 0 to 255. 0 means background
+(white), 255 means foreground (black).
+<BR>&nbsp;
+<BR>
+<HR WIDTH="100%">
+<H2>
+<FONT COLOR="#3333FF">THE IDX FILE FORMAT</FONT></H2>
+the IDX file format is a simple format for vectors and multidimensional
+matrices of various numerical types.
+
+<P>The basic format is
+
+<P><TT>magic number</TT>
+<BR><TT>size in dimension 0</TT>
+<BR><TT>size in dimension 1</TT>
+<BR><TT>size in dimension 2</TT>
+<BR><TT>.....</TT>
+<BR><TT>size in dimension N</TT>
+<BR><TT>data</TT>
+
+<P>The magic number is an integer (MSB first). The first 2 bytes are always
+0.
+
+<P>The third byte codes the type of the data:
+<BR>0x08: unsigned byte
+<BR>0x09: signed byte
+<BR>0x0B: short (2 bytes)
+<BR>0x0C: int (4 bytes)
+<BR>0x0D: float (4 bytes)
+<BR>0x0E: double (8 bytes)
+
+<P>The 4-th byte codes the number of dimensions of the vector/matrix: 1
+for vectors, 2 for matrices....
+
+<P>The sizes in each dimension are 4-byte integers (MSB first, high endian,
+like in most non-Intel processors).
+
+<P>The data is stored like in a C array, i.e. the index in the last dimension
+changes the fastest.
+<BR>&nbsp;
+<BR>&nbsp;
+<BR>
+<p>
+Happy hacking.
+<p>
+<HR WIDTH="100%">
+<p>
+The digit images in the MNIST set were originally selected and
+experimented with by Corinna Cortes using bounding-box normalization
+and centering. Yann LeCun's version which is provided on this page
+uses centering by center of mass within in a larger window.
+<P>
+<font COLOR="#3333FF"><A HREF="http://yann.lecun.com">Yann LeCun</A>, Professor<br>
+The Courant Institute of Mathematical Sciences<br>
+New York University<br>
+<img src="../../ex/images/email.gif">
+</font>
+<p>
+<font COLOR="#3333FF"><a
+href="http://homepage.mac.com/corinnacortes/">Corinna Cortes</a>, Research Scientist<br>
+Google Labs, New York<br>
+<i>corinna at google dot com</i>
+</font>
+
+</BODY>
+</HTML>
+particularly Lego robots (before the days of the Lego Mindstorms)
+<li>Hacking various computing equipment:
+    I have owned 5 computers between 1978 and 1992: SYM-1, OSI C2-4P, Commodore 64, 
+    Amiga 1000, Amiga 4000. then I lost interest in personal computing when the only thing
+    you could get was a boring Wintel box. Then, Linux appeared and I came back to life.....
+<li>Sailing: I own two sport catamarans, a Nacra 5.8 and a Prindle 19. I also sail 
+    and race larger boats with friends.
+<li>Graphic Design: I designed the DjVu logo and much of the AT&T DjVu web site.
+<li>Reading European comics. Comics in certain European countries (France, Belgium, Italy,
+   Spain) are considered a true art form ("le 8-ieme art"), and not just a business with
+   products targeted at teenagers like on this side of the pond. Although I don't have
+   a shred of evidence to support it, I claim to have the largest private collection 
+   of French-language comics in the Eastern US. 
+<li>making bad puns in French, but I don't 
+    have much of an audience this side of the pond.
+<li>Sipping wine, particularly red, particularly French,
+    particularly Bordeaux, particularly Saint-Julien.
+</ul>
+<p>
+
+<table border=0 cellpadding=4 cellspacing=0 width=100%><tr bgcolor="#d8d8d8"><td align="left"><font face="Arial,Helvetica" size="3" color=""#8da9ca"><b><a name="bib2web"><a href="http://bib2web.djvuzone.org">Bib2Web: Automatic Creation of Publication Pages</a></a></b></font></td></tr></table><p>
+<div align=justify>
+<a href="http://bib2web.djvuzone.org"><img align=right src=./ex/images/b2w-80x40.gif width=80 height=40 alt="Bib2Web"></a>
+No deep science here, but if you are looking for a simple/automatic way to make all your 
+publications (digital or paper-based) available on your web page, 
+visit <a href="http://bib2web.djvuzone.org">Bib2Web</a>.
+<p>
+</div>
+
+<table border=0 cellpadding=4 cellspacing=0 width=100%><tr bgcolor="#d8d8d8"><td align="left"><font face="Arial,Helvetica" size="3" color=""#8da9ca"><b><a name="photos"><a href="#photos">Photos Galleries</a></a></b></font></td></tr></table><p>
+
+<ul>
+<li><a href="http://www.lecun.org/gallery/libpro/index.html">Photos taken at various conferences,
+     workshops, trade shows and other professional events</a>. Includes
+     pictures from CVPR, NIPS, Learning@Snowbird, ICDAR, CIFED, etc.
+<li><a href="http://www.lecun.org/gallery/libhob/index.html">A photo and movie gallery of various 
+    radio-controled airplanes</a>, other miniature flying objects,
+    lego robots, and other techno toys. Check out also my 
+    <a href="http://www.lecun.org/hobby/planes.html">model airplane page</a>.
+<li><a href="http://www.lecun.org/gallery/libart/index.html">Miscellaneous artsy and nature picture</a>,
+    including garden-variety wild animals, landscapes, etc.
+<li><a href="http://www.lecun.org/gallery/libart/20000816-lebourget/index.html">Vintage airplanes</a> at
+    the national air and space museum in Le Bourget, near Paris.
+</ul>
+<p>
+
+<table border=0 cellpadding=4 cellspacing=0 width=100%><tr bgcolor="#d8d8d8"><td align="left"><font face="Arial,Helvetica" size="3" color=""#8da9ca"><b><a name="fun"><a href="./ex/fun/index.html">Fun Stuff</a></a></b></font></td></tr></table><p>
+
+<ul>
+<li>No, <a href="./ex/fun/index.html#kahn.html">Yann is NOT Philippe Kahn's evil brother</a>
+<li><a href="./ex/fun/index.html#gellman">Your Name can't possibly be pronounced that way</a>: 
+or how a Nobel prize winner tried to tell me how to pronounce my own name.
+<li><a href="./ex/fun/index.html#tex">Who is Tex Avery anyway?</a>
+<li><a href="./ex/fun/index.html#steep">Steep Learning Curves and other 
+erroneous metaphores</a>
+<li><a href="./ex/fun/index.html#allyourbayes">Vladimir Vapnik meets the 
+video game sub-culture</a>
+<li><a href="./ex/fun/index.html#philo">Cheap Philosophy (42 cents)</a>
+<li><a href="./ex/fun/index.html#disclaim">A Mathematical Theory of Empty Disclaimers</a>
+<li><a href="./ex/fun/index.html#weasel">The Axis of Rivals</a>
+</ul>
+
+<table border=0 cellpadding=4 cellspacing=0 width=100%><tr bgcolor="#d8d8d8"><td align="left"><font face="Arial,Helvetica" size="3" color=""#8da9ca"><b><a name="group"><a href="./ex/group/index.html">Previous Life</a></a></b></font></td></tr></table><p>
+
+My former group at AT&amp;T (the Image Processing Research Department)
+and its ancestor (Larry Jackel's Adaptive Systems Research Department)
+made numerous contributions to Machine Learning, Image Compression,
+Pattern Recognition, Synthetic Persons (talking heads), and Neural-Net
+Hardware. Specific contributions not mentioned elsewhere on this site
+include the ever so popular Support Vector Machine, the PlayMail and 
+Virt2Elle synthetic talking heads, the Net32K and ANNA neural net chips, 
+and many others. 
+Visit <a href="./ex/group/index.html">my former group's home page</a> 
+for more details.  <p>
+
+<table border=0 cellpadding=4 cellspacing=0 width=100%><tr bgcolor="#d8d8d8"><td align="left"><font face="Arial,Helvetica" size="3" color=""#8da9ca"><b><a name="links"><a href="./ex/links/index.html">Links</a></a></b></font></td></tr></table><p>
+
+Links to interesting places on the web, friends'
+home pages, etc <a href="elloww.html">.</a>
+
+
+
+</td>
+</tr>
+</table>
+<p>
+<center>
+
+<br><br>
+<hr width=15%>
+<br>
+
+<!--Text-Navigation-->
+<center>
+<table border=0 cellpadding=1 cellspacing=1>
+<tr>
+  <td class="footertextmenu" valign="top"><font face="arial, helvetica, sans-serif" size=2><span class="footertextmenu"><a href="./ex/ex/index.html">[HOME]</a></span></font></td>
+  <td class="footertextmenu" valign="top"><font face="arial, helvetica, sans-serif" size=2><span class="footertextmenu"><a href="./ex/news/index.html">[NEWS]</a></span></font></td>
+  <td class="footertextmenu" valign="top"><font face="arial, helvetica, sans-serif" size=2><span class="footertextmenu"><a href="./exdb/publis/index.html">[PUBLICATIONS]</a></span></font></td>
+</tr>
+<tr>
+  <td class="footertextmenu" valign="top"><font face="arial, helvetica, sans-serif" size=2><span class="footertextmenu"><a href="./ex/research/index.html">[RESEARCH]</a></span></font></td>
+  <td class="footertextmenu" valign="top"><font face="arial, helvetica, sans-serif" size=2><span class="footertextmenu"><a href="./ex/downloads/index.html">[DOWNLOADS]</a></span></font></td>
+</tr>
+<tr>
+  <td class="footertextmenu" valign="top"><font face="arial, helvetica, sans-serif" size=2><span class="footertextmenu"><a href="./exdb/lenet/index.html">[LENET]</a></span></font></td>
+  <td class="footertextmenu" valign="top"><font face="arial, helvetica, sans-serif" size=2><span class="footertextmenu"><a href="./ex/music/index.html">[MUSIC]</a></span></font></td>
+  <td class="footertextmenu" valign="top"><font face="arial, helvetica, sans-serif" size=2><span class="footertextmenu"><a href="./exdb/photos/index.html">[PHOTOS]</a></span></font></td>
+</tr>
+<tr>
+  <td class="footertextmenu" valign="top"><font face="arial, helvetica, sans-serif" size=2><span class="footertextmenu"><a href="./ex/hobbies/index.html">[HOBBIES]</a></span></font></td>
+  <td class="footertextmenu" valign="top"><font face="arial, helvetica, sans-serif" size=2><span class="footertextmenu"><a href="./ex/fun/index.html">[FUN]</a></span></font></td>
+  <td class="footertextmenu" valign="top"><font face="arial, helvetica, sans-serif" size=2><span class="footertextmenu"><a href="./ex/links/index.html">[LINKS]</a></span></font></td>
+</tr>
+</td>
+</table>
+</div>
+<p>
+<font size=-1 face="arial,helvetica">
+<A HREF="http://yann.lecun.com">Yann LeCun</a>, Professor<BR>
+<a href="http://www.cims.nyu.edu">The Courant Institute of Mathematical Sciences</a><br>
+Room 1221, 715 Broadway, New York, NY 10012, USA<br>
+tel: (212)998-3283<br>
+<img src="./ex/images/email.gif">
+</font>
+<p>
+<FONT face="arial, helvetica" color="#808080" size=-2>
+Copyright © 2000-2004 Yann LeCun.</FONT>
+</center>
+
+<!-- This text is just for giving more info to robots -->
+<font size=0 color=#ffffff>
+Yann LeCun, Le Cun, LeNet, DjVu, convolutional neural networks, 
+machine learning, computer vision, pattern recognition, 
+document imaging, image compression, digital libraries,</font>
+<a href="/elloww.html"><font color=#ffffff>zinet</font></a>
+
+
+</body>
+</html>
+
+>
+<tr><td>69KB</td><td><a href=djvu/bottou-lecun-04b.djvu><img src=images/djvu-icon-40x14.gif border=0></a></td></tr>
+<tr><td>76KB</td><td><a href=psgz/bottou-lecun-04b.ps.gz><img src=images/psgz-icon-40x14.gif border=0></a></td></tr>
+<tr><td>97KB</td><td><a href=pdf/bottou-lecun-04b.pdf><img src=images/pdf-icon-40x14.gif border=0></a></td></tr>
+</td></tr></table><br>
+<a name=saul-02 ><table width=95% cellspacing=0 border=0  bgcolor=#f4e8d1 align=center>
+<tr><td rowspan=4 valign=top width=30><b>108.</b></td>
+<td rowspan=4 valign=top><b>[Saul et al., 2003]
+</b><br>
+<P>L. K. Saul, D. D. Lee, C. L. Isbell, and Y. LeCun, "Real time voice processing with audiovisual feedback: toward autonomous agents with perfect pitch.," in <EM>Advances in Neural Information Processing Systems 14</EM>, 2003.
+<font size=2>[8 pages]</font></td>
+<td>&nbsp;</td><td><a href=lecun.bib#saul-02><img src=images/bibtex-icon-40x14.gif border=0></a></td></tr>
+<tr><td>108KB</td><td><a href=djvu/saul-02.djvu><img src=images/djvu-icon-40x14.gif border=0></a></td></tr>
+<tr><td>779KB</td><td><a href=psgz/saul-02.ps.gz><img src=images/psgz-icon-40x14.gif border=0></a></td></tr>
+<tr><td>619KB</td><td><a href=pdf/saul-02.pdf><img src=images/pdf-icon-40x14.gif border=0></a></td></tr>
+</td></tr></table><br>
+<a name=lecun-bottou-02 ><table width=95% cellspacing=0 border=0  bgcolor=#f4e8d1 align=center>
+<tr><td rowspan=4 valign=top width=30><b>107.</b></td>
+<td rowspan=4 valign=top><b>[LeCun and Bottou, 2002]
+</b><br>
+<P>Y. LeCun and L. Bottou, "<A href="http://lush.sourceforge.net">Lush Reference Manual</A>," 2002.
+<font size=2>[8 pages]</font></td>
+<td>&nbsp;</td><td><a href=lecun.bib#lecun-bottou-02><img src=images/bibtex-icon-40x14.gif border=0></a></td></tr>
+<td>&nbsp;</td><td>&nbsp;</td></tr>
+<tr><td>&nbsp;</td><td>&nbsp;</td></tr>
+<tr><td>&nbsp;</td><td>&nbsp;</td></tr>
+</td></tr></table><br>
+<a name=haffner-2002 ><table width=95% cellspacing=0 border=0  bgcolor=#f4e8d1 align=center>
+<tr><td rowspan=4 valign=top width=30><b>106.</b></td>
+<td rowspan=4 valign=top><b>[Haffner et al., 2002]
+</b><br>
+<P>Patrick Haffner, Leon Bottou, Yann LeCun, and Luc Vincent, "A General Segmentation Scheme for DjVu Document Compression," in <EM>Proceedings of the International Symposium on Mathematical Morphology (ISMM'02)</EM>, (Sydney, Australia), Apr. 2002.
+<font size=2>[18 pages]</font></td>
+<td>&nbsp;</td><td><a href=lecun.bib#haffner-2002><img src=images/bibtex-icon-40x14.gif border=0></a></td></tr>
+<tr><td>191KB</td><td><a href=djvu/haffner-2002.djvu><img src=images/djvu-icon-40x14.gif border=0></a></td></tr>
+<tr><td>5780KB</td><td><a href=psgz/haffner-2002.ps.gz><img src=images/psgz-icon-40x14.gif border=0></a></td></tr>
+<tr><td>&nbsp;</td><td>&nbsp;</td></tr>
+</td></tr></table><br>
+<a name=jordan-lecun-solla-01 ><table width=95% cellspacing=0 border=0  bgcolor=#f4e8d1 align=center>
+<tr><td rowspan=4 valign=top width=30><b>105.</b></td>
+<td rowspan=4 valign=top><b>[, 2001]
+</b><br>
+<P><EM><A href="http://nips.djvuzone.org">Advances in Neural Information Processing Systems: Proceedings of the First 12 Conferences</A></EM>, (M. I. Jordan, Y. LeCun, and S. A. Solla, eds.), MIT Press, 2001.
+<font size=2>[18 pages]</font></td>
+<td>&nbsp;</td><td><a href=lecun.bib#jordan-lecun-solla-01><img src=images/bibtex-icon-40x14.gif border=0></a></td></tr>
+<td>&nbsp;</td><td>&nbsp;</td></tr>
+<tr><td>&nbsp;</td><td>&nbsp;</td></tr>
+<tr><td>&nbsp;</td><td>&nbsp;</td></tr>
+</td></tr></table><br>
+<a name=bottou-01a ><table width=95% cellspacing=0 border=0  bgcolor=#f4e8d1 align=center>
+<tr><td rowspan=4 valign=top width=30><b>104.</b></td>
+<td rowspan=4 valign=top><b>[Bottou and Haffner and LeCun, 2001]
+</b><br>
+<P>L. Bottou, P. Haffner, and Y. LeCun, "Conversion of Digital Documents to Multilayer Raster Formats," in <EM>Proceedings of the International Conference on Document Analysis and Recognition</EM>, Sep. 2001.
+<font size=2>[10 pages]</font></td>
+<td>&nbsp;</td><td><a href=lecun.bib#bottou-01a><img src=images/bibtex-icon-40x14.gif border=0></a></td></tr>
+<tr><td>117KB</td><td><a href=djvu/bottou-01.djvu><img src=images/djvu-icon-40x14.gif border=0></a></td></tr>
+<tr><td>745KB</td><td><a href=psgz/bottou-01.ps.gz><img src=images/psgz-icon-40x14.gif border=0></a></td></tr>
+<tr><td>668KB</td><td><a href=pdf/bottou-01.pdf><img src=images/pdf-icon-40x14.gif border=0></a></td></tr>
+</td></tr></table><br>
+<a name=lecun-01a ><table width=95% cellspacing=0 border=0  bgcolor=#f4e8d1 align=center>
+<tr><td rowspan=4 valign=top width=30><b>103.</b></td>
+<td rowspan=4 valign=top><b>[LeCun et al., 2001]
+</b><br>
+<P>Y. LeCun, L. Bottou, Y. Bengio, and P. Haffner, "Gradient-Based Learning Applied to Document Recognition," in <EM>Intelligent Signal Processing</EM>, pp. 306-351, 2001.
+<font size=2>[46 pages]</font></td>
+<td>&nbsp;</td><td><a href=lecun.bib#lecun-01a><img src=images/bibtex-icon-40x14.gif border=0></a></td></tr>
+<tr><td>833KB</td><td><a href=djvu/lecun-01a.djvu><img src=images/djvu-icon-40x14.gif border=0></a></td></tr>
+<tr><td>688KB</td><td><a href=psgz/lecun-01a.ps.gz><img src=images/psgz-icon-40x14.gif border=0></a></td></tr>
+<tr><td>933KB</td><td><a href=pdf/lecun-01a.pdf><img src=images/pdf-icon-40x14.gif border=0></a></td></tr>
+</td></tr></table><br>
+<a name=bottou-01 ><table width=95% cellspacing=0 border=0  bgcolor=#f4e8d1 align=center>
+<tr><td rowspan=4 valign=top width=30><b>102.</b></td>
+<td rowspan=4 valign=top><b>[Bottou and Haffner and LeCun, 2001]
+</b><br>
+<P>L. Bottou, P. Haffner, and Y. LeCun, "Efficient Conversion of Digital Documents to Multilayer Raster Formats," in <EM>International Conference on Document Analysis and Recognition (ICDAR)</EM>, (Seattle), Sep. 2001.
+<font size=2>[10 pages]</font></td>
+<td>&nbsp;</td><td><a href=lecun.bib#bottou-01><img src=images/bibtex-icon-40x14.gif border=0></a></td></tr>
+<tr><td>117KB</td><td><a href=djvu/bottou-01.djvu><img src=images/djvu-icon-40x14.gif border=0></a></td></tr>
+<tr><td>745KB</td><td><a href=psgz/bottou-01.ps.gz><img src=images/psgz-icon-40x14.gif border=0></a></td></tr>
+<tr><td>668KB</td><td><a href=pdf/bottou-01.pdf><img src=images/pdf-icon-40x14.gif border=0></a></td></tr>
+</td></tr></table><br>
+<a name=lecun-01 ><table width=95% cellspacing=0 border=0  bgcolor=#f4e8d1 align=center>
+<tr><td rowspan=4 valign=top width=30><b>101.</b></td>
+<td rowspan=4 valign=top><b>[LeCun et al., 2001]
+</b><br>
+<P>Y. LeCun, L. Bottou, A. Erofeev, P. Haffner, and W. Riemers, "DjVu Document Browsing with On-Demand loading and rendering of image components," in <EM>Internet Imaging</EM>, (San Jose), Jan. 2001.
+<font size=2>[10 pages]</font></td>
+<td>&nbsp;</td><td><a href=lecun.bib#lecun-01><img src=images/bibtex-icon-40x14.gif border=0></a></td></tr>
+<tr><td>102KB</td><td><a href=djvu/lecun-01.djvu><img src=images/djvu-icon-40x14.gif border=0></a></td></tr>
+<tr><td>72KB</td><td><a href=psgz/lecun-01.ps.gz><img src=images/psgz-icon-40x14.gif border=0></a></td></tr>
+<tr><td>185KB</td><td><a href=pdf/lecun-01.pdf><img src=images/pdf-icon-40x14.gif border=0></a></td></tr>
+</td></tr></table><br>
+<a name=simard-00 ><table width=95% cellspacing=0 border=0  bgcolor=#f4e8d1 align=center>
+<tr><td rowspan=4 valign=top width=30><b>100.</b></td>
+<td rowspan=4 valign=top><b>[Simard et al., 2001]
+</b><br>
+<P>P. Y. Simard, Y. LeCun, J. S. Denker, and B. Victorri, "Transformation Invariance in Pattern Recognition -- Tangent Distance and Tangent Propagation," <EM>International Journal of Imaging Systems and Technology</EM>, vol. 11, no. 3, 2001.
+<font size=2>[35 pages]</font></td>
+<td>&nbsp;</td><td><a href=lecun.bib#simard-00><img src=images/bibtex-icon-40x14.gif border=0></a></td></tr>
+<tr><td>279KB</td><td><a href=djvu/simard-00.djvu><img src=images/djvu-icon-40x14.gif border=0></a></td></tr>
+<tr><td>227KB</td><td><a href=psgz/simard-00.ps.gz><img src=images/psgz-icon-40x14.gif border=0></a></td></tr>
+<tr><td>436KB</td><td><a href=pdf/simard-00.pdf><img src=images/pdf-icon-40x14.gif border=0></a></td></tr>
+</td></tr></table><br>
+<a name=bottou-00 ><table width=95% cellspacing=0 border=0  bgcolor=#f4e8d1 align=center>
+<tr><td rowspan=4 valign=top width=30><b>99.</b></td>
+<td rowspan=4 valign=top><b>[Bottou et al., 2000]
+</b><br>
+<P>Leon Bottou, P. Haffner, Y. LeCun, Howard P., P. Vincent, and B. Riemers, "DjVu: Un Systeme de Compression d'Images pour la Distribution Reticulaire de Documents Numerises. (DjVu: an image compression system for distributing scanned document on the Internet)," in <EM>Conference Internationale Francophone sur L'Ecrit et le Document</EM>, (Lyon, France), July 2000.
+<font size=2>[10 pages]</font></td>
+<td>&nbsp;</td><td><a href=lecun.bib#bottou-00><img src=images/bibtex-icon-40x14.gif border=0></a></td></tr>
+<tr><td>108KB</td><td><a href=djvu/bottou-00.djvu><img src=images/djvu-icon-40x14.gif border=0></a></td></tr>
+<tr><td>74KB</td><td><a href=psgz/bottou-00.ps.gz><img src=images/psgz-icon-40x14.gif border=0></a></td></tr>
+<tr><td>197KB</td><td><a href=pdf/bottou-00.pdf><img src=images/pdf-icon-40x14.gif border=0></a></td></tr>
+</td></tr></table><br>
+<a name=haffner-99a ><table width=95% cellspacing=0 border=0  bgcolor=#f4e8d1 align=center>
+<tr><td rowspan=4 valign=top width=30><b>98.</b></td>
+<td rowspan=4 valign=top><b>[Haffner et al., 1999]
+</b><br>
+<P>P. Haffner, Y. LeCun, Leon Bottou, Howard P., P. Vincent, and B. Riemers, "Color Documents on the Web with DjVu," in <EM>International Conference on Image Processing</EM>, (Kobe, Japan), pp. 239-243, Oct. 1999.
+<font size=2>[5 pages]</font></td>
+<td>&nbsp;</td><td><a href=lecun.bib#haffner-99a><img src=images/bibtex-icon-40x14.gif border=0></a></td></tr>
+<tr><td>79KB</td><td><a href=djvu/haffner-99a.djvu><img src=images/djvu-icon-40x14.gif border=0></a></td></tr>
+<tr><td>69KB</td><td><a href=psgz/haffner-99a.ps.gz><img src=images/psgz-icon-40x14.gif border=0></a></td></tr>
+<tr><td>181KB</td><td><a href=pdf/haffner-99a.pdf><img src=images/pdf-icon-40x14.gif border=0></a></td></tr>
+</td></tr></table><br>
+<a name=lecun-99b ><table width=95% cellspacing=0 border=0  bgcolor=#f4e8d1 align=center>
+<tr><td rowspan=4 valign=top width=30><b>97.</b></td>
+<td rowspan=4 valign=top><b>[LeCun et al., 1999]
+</b><br>
+<P>Y. LeCun, P. Haffner, L. Bottou, and Y. Bengio, "Gradient-Based Learning for Object Detection, Segmentation and Recognition," AT&amp;T Labs, 1999.
+<font size=2>[26 pages]</font></td>
+<td>&nbsp;</td><td><a href=lecun.bib#lecun-99b><img src=images/bibtex-icon-40x14.gif border=0></a></td></tr>
+<tr><td>387KB</td><td><a href=djvu/lecun-99b.djvu><img src=images/djvu-icon-40x14.gif border=0></a></td></tr>
+<tr><td>434KB</td><td><a href=psgz/lecun-99b.ps.gz><img src=images/psgz-icon-40x14.gif border=0></a></td></tr>
+<tr><td>461KB</td><td><a href=pdf/lecun-99b.pdf><img src=images/pdf-icon-40x14.gif border=0></a></td></tr>
+</td></tr></table><br>
+<a name=lecun-99 ><table width=95% cellspacing=0 border=0  bgcolor=#f4e8d1 align=center>
+<tr><td rowspan=4 valign=top width=30><b>96.</b></td>
+<td rowspan=4 valign=top><b>[LeCun et al., 1999]
+</b><br>
+<P>Y. LeCun, P. Haffner, L. Bottou, and Y. Bengio, "Object Recognition with Gradient-Based Learning," in <EM>Feature Grouping</EM>, (D. Forsyth, ed.), 1999.
+<font size=2>[28 pages]</font></td>
+<td>&nbsp;</td><td><a href=lecun.bib#lecun-99><img src=images/bibtex-icon-40x14.gif border=0></a></td></tr>
+<tr><td>347KB</td><td><a href=djvu/lecun-99.djvu><img src=images/djvu-icon-40x14.gif border=0></a></td></tr>
+<tr><td>415KB</td><td><a href=psgz/lecun-99.ps.gz><img src=images/psgz-icon-40x14.gif border=0></a></td></tr>
+<tr><td>430KB</td><td><a href=pdf/lecun-99.pdf><img src=images/pdf-icon-40x14.gif border=0></a></td></tr>
+</td></tr></table><br>
+<a name=haffner-99 ><table width=95% cellspacing=0 border=0  bgcolor=#f4e8d1 align=center>
+<tr><td rowspan=4 valign=top width=30><b>95.</b></td>
+<td rowspan=4 valign=top><b>[Haffner et al., 1999]
+</b><br>
+<P>P. Haffner, Leon Bottou, Howard P., and Yann LeCun, "DjVu: Analyzing and Compressing Scanned Documents for Internet Distribution," in <EM>International Conference on Document Analysis and Recognition (ICDAR)</EM>, pp. 625-628, 1999.
+<font size=2>[4 pages]</font></td>
+<td>&nbsp;</td><td><a href=lecun.bib#haffner-99><img src=images/bibtex-icon-40x14.gif border=0></a></td></tr>
+<tr><td>86KB</td><td><a href=djvu/haffner-99.djvu><img src=images/djvu-icon-40x14.gif border=0></a></td></tr>
+<tr><td>1809KB</td><td><a href=psgz/haffner-99.ps.gz><img src=images/psgz-icon-40x14.gif border=0></a></td></tr>
+<tr><td>1637KB</td><td><a href=pdf/haffner-99.pdf><img src=images/pdf-icon-40x14.gif border=0></a></td></tr>
+</td></tr></table><br>
+<a name=simard-99 ><table width=95% cellspacing=0 border=0  bgcolor=#f4e8d1 align=center>
+<tr><td rowspan=4 valign=top width=30><b>94.</b></td>
+<td rowspan=4 valign=top><b>[Simard et al., 1999]
+</b><br>
+<P>P. Simard, L. Bottou, P. Haffner, and Y. LeCun, "Boxlets: a fast convolution algorithm for neural networks and signal processing," in <EM>Advances in Neural Information Processing Systems 11</EM>, 1999.
+<font size=2>[7 pages]</font></td>
+<td>&nbsp;</td><td><a href=lecun.bib#simard-99><img src=images/bibtex-icon-40x14.gif border=0></a></td></tr>
+<tr><td>384KB</td><td><a href=djvu/simard-99.djvu><img src=images/djvu-icon-40x14.gif border=0></a></td></tr>
+<tr><td>823KB</td><td><a href=psgz/simard-99.ps.gz><img src=images/psgz-icon-40x14.gif border=0></a></td></tr>
+<tr><td>446KB</td><td><a href=pdf/simard-99.pdf><img src=images/pdf-icon-40x14.gif border=0></a></td></tr>
+</td></tr></table><br>
+<a name=chellappa-98 ><table width=95% cellspacing=0 border=0  bgcolor=#f4e8d1 align=center>
+<tr><td rowspan=4 valign=top width=30><b>93.</b></td>
+<td rowspan=4 valign=top><b>[ Chellappa et al., 1998]
+</b><br>
+<P>R. Chellappa, K. Fukushima, A. Katsaggelos, S.-Y. Kung, Y. LeCun, N. M. Nasrabadi, and T. A. Poggio, "Applications of Artificial Neural Networks to Image Processing (guest editorial)," <EM>IEEE Transactions on Image Processing</EM>, vol. 7, no. 8, pp. 1093-1097, Aug. 1998.
+<font size=2>[4 pages]</font></td>
+<td>&nbsp;</td><td><a href=lecun.bib#chellappa-98><img src=images/bibtex-icon-40x14.gif border=0></a></td></tr>
+<tr><td>81KB</td><td><a href=djvu/chellappa-98.djvu><img src=images/djvu-icon-40x14.gif border=0></a></td></tr>
+<tr><td>75KB</td><td><a href=psgz/chellappa-98.ps.gz><img src=images/psgz-icon-40x14.gif border=0></a></td></tr>
+<tr><td>55KB</td><td><a href=pdf/chellappa-98.pdf><img src=images/pdf-icon-40x14.gif border=0></a></td></tr>
+</td></tr></table><br>
+<a name=lecun-98c ><table width=95% cellspacing=0 border=0  bgcolor=#f4e8d1 align=center>
+<tr><td rowspan=4 valign=top width=30><b>92.</b></td>
+<td rowspan=4 valign=top><b>[LeCun et al., 1998]
+</b><br>
+<P>Y. LeCun, L. Bottou, P. Haffner, and P. Howard, "DjVu: a compression method for distributing scanned documents in color over the internet," in <EM>Color 6</EM>, 1998.
+<font size=2>[4 pages]</font></td>
+<td>&nbsp;</td><td><a href=lecun.bib#lecun-98c><img src=images/bibtex-icon-40x14.gif border=0></a></td></tr>
+<tr><td>117KB</td><td><a href=djvu/lecun-98c.djvu><img src=images/djvu-icon-40x14.gif border=0></a></td></tr>
+<tr><td>782KB</td><td><a href=psgz/lecun-98c.ps.gz><img src=images/psgz-icon-40x14.gif border=0></a></td></tr>
+<tr><td>416KB</td><td><a href=pdf/lecun-98c.pdf><img src=images/pdf-icon-40x14.gif border=0></a></td></tr>
+</td></tr></table><br>
+<a name=lecun-98b ><table width=95% cellspacing=0 border=0  bgcolor=#f4e8d1 align=center>
+<tr><td rowspan=4 valign=top width=30><b>91.</b></td>
+<td rowspan=4 valign=top><b>[LeCun et al., 1998]
+</b><br>
+<P>Y. LeCun, L. Bottou, G. Orr, and K. Muller, "Efficient BackProp," in <EM>Neural Networks: Tricks of the trade</EM>, (G. Orr and Muller K., eds.), 1998.
+<font size=2>[44 pages]</font></td>
+<td>&nbsp;</td><td><a href=lecun.bib#lecun-98b><img src=images/bibtex-icon-40x14.gif border=0></a></td></tr>
+<tr><td>278KB</td><td><a href=djvu/lecun-98b.djvu><img src=images/djvu-icon-40x14.gif border=0></a></td></tr>
+<tr><td>291KB</td><td><a href=psgz/lecun-98b.ps.gz><img src=images/psgz-icon-40x14.gif border=0></a></td></tr>
+<tr><td>500KB</td><td><a href=pdf/lecun-98b.pdf><img src=images/pdf-icon-40x14.gif border=0></a></td></tr>
+</td></tr></table><br>
+<a name=simard-98 ><table width=95% cellspacing=0 border=0  bgcolor=#f4e8d1 align=center>
+<tr><td rowspan=4 valign=top width=30><b>90.</b></td>
+<td rowspan=4 valign=top><b>[Simard et al., 1998]
+</b><br>
+<P>P. Simard, Y. LeCun, J. Denker, and B. Victorri, "Transformation Invariance in Pattern Recognition, Tangent Distance and Tangent Propagation," in <EM>Neural Networks: Tricks of the trade</EM>, (G. Orr and Muller K., eds.), 1998.
+<font size=2>[35 pages]</font></td>
+<td>&nbsp;</td><td><a href=lecun.bib#simard-98><img src=images/bibtex-icon-40x14.gif border=0></a></td></tr>
+<tr><td>277KB</td><td><a href=djvu/simard-98.djvu><img src=images/djvu-icon-40x14.gif border=0></a></td></tr>
+<tr><td>227KB</td><td><a href=psgz/simard-98.ps.gz><img src=images/psgz-icon-40x14.gif border=0></a></td></tr>
+<tr><td>436KB</td><td><a href=pdf/simard-98.pdf><img src=images/pdf-icon-40x14.gif border=0></a></td></tr>
+</td></tr></table><br>
+<a name=haskell-98 ><table width=95% cellspacing=0 border=0  bgcolor=#f4e8d1 align=center>
+<tr><td rowspan=4 valign=top width=30><b>89.</b></td>
+<td rowspan=4 valign=top><b>[Haskell et al., 1998]
+</b><br>
+<P>B. Haskell, P. Howard, Y. LeCun, A. Puri, J. Ostermann, R. Civanlar, L. Rabiner, L. Bottou, and P. Haffner, "Image and Video Coding - Emerging Standards and Beyond," <EM>IEEE Transaction CSVT</EM>, vol. 8, no. 7, pp. 814-837, Nov. 1998.
+<font size=2>[26 pages]</font></td>
+<td>&nbsp;</td><td><a href=lecun.bib#haskell-98><img src=images/bibtex-icon-40x14.gif border=0></a></td></tr>
+<tr><td>603KB</td><td><a href=djvu/haskell-98-bw.djvu><img src=images/djvu-icon-40x14.gif border=0></a></td></tr>
+<tr><td>&nbsp;</td><td>&nbsp;</td></tr>
+<tr><td>&nbsp;</td><td>&nbsp;</td></tr>
+</td></tr></table><br>
+<a name=bottou-98 ><table width=95% cellspacing=0 border=0  bgcolor=#f4e8d1 align=center>
+<tr><td rowspan=4 valign=top width=30><b>88.</b></td>
+<td rowspan=4 valign=top><b>[Bottou et al., 1998]
+</b><br>
+<P>L. Bottou, P. Haffner, P. Howard, P. Simard, Y. Bengio, and Y. LeCun, "High Quality Document Image Compression with DjVu," <EM>Journal of Electronic Imaging</EM>, vol. 7, no. 3, pp. 410-425, July 1998.
+<font size=2>[25 pages]</font></td>
+<td>&nbsp;</td><td><a href=lecun.bib#bottou-98><img src=images/bibtex-icon-40x14.gif border=0></a></td></tr>
+<tr><td>439KB</td><td><a href=djvu/bottou-98.djvu><img src=images/djvu-icon-40x14.gif border=0></a></td></tr>
+<tr><td>1947KB</td><td><a href=psgz/bottou-98.ps.gz><img src=images/psgz-icon-40x14.gif border=0></a></td></tr>
+<tr><td>1339KB</td><td><a href=pdf/bottou-98.pdf><img src=images/pdf-icon-40x14.gif border=0></a></td></tr>
+</td></tr></table><br>
+<a name=haffner-98 ><table width=95% cellspacing=0 border=0  bgcolor=#f4e8d1 align=center>
+<tr><td rowspan=4 valign=top width=30><b>87.</b></td>
+<td rowspan=4 valign=top><b>[Haffner et al., 1998]
+</b><br>
+<P>P. Haffner, L. Bottou, P. Howard, P. Simard, Y. Bengio, and Y. LeCun, "Browsing through High Quality Document Images with DjVu," in <EM>Proc. of Advances in Digital Libraries 98</EM>, pp. 309-318, 1998.
+<font size=2>[10 pages]</font></td>
+<td>&nbsp;</td><td><a href=lecun.bib#haffner-98><img src=images/bibtex-icon-40x14.gif border=0></a></td></tr>
+<tr><td>257KB</td><td><a href=djvu/haffner-98.djvu><img src=images/djvu-icon-40x14.gif border=0></a></td></tr>
+<tr><td>1762KB</td><td><a href=psgz/haffner-98.ps.gz><img src=images/psgz-icon-40x14.gif border=0></a></td></tr>
+<tr><td>1164KB</td><td><a href=pdf/haffner-98.pdf><img src=images/pdf-icon-40x14.gif border=0></a></td></tr>
+</td></tr></table><br>
+<a name=lecun-98 ><table width=95% cellspacing=0 border=0  bgcolor=#f4e8d1 align=center>
+<tr><td rowspan=4 valign=top width=30><b>86.</b></td>
+<td rowspan=4 valign=top><b>[LeCun et al., 1998]
+</b><br>
+<P>Y. LeCun, L. Bottou, Y. Bengio, and P. Haffner, "Gradient-Based Learning Applied to Document Recognition," <EM>Proceedings of the IEEE</EM>, vol. 86, no. 11, pp. 2278-2324, Nov. 1998.
+<font size=2>[46 pages]</font></td>
+<td>&nbsp;</td><td><a href=lecun.bib#lecun-98><img src=images/bibtex-icon-40x14.gif border=0></a></td></tr>
+<tr><td>823KB</td><td><a href=djvu/lecun-98.djvu><img src=images/djvu-icon-40x14.gif border=0></a></td></tr>
+<tr><td>688KB</td><td><a href=psgz/lecun-98.ps.gz><img src=images/psgz-icon-40x14.gif border=0></a></td></tr>
+<tr><td>933KB</td><td><a href=pdf/lecun-98.pdf><img src=images/pdf-icon-40x14.gif border=0></a></td></tr>
+</td></tr></table><br>
+<a name=cox-98 ><table width=95% cellspacing=0 border=0  bgcolor=#f4e8d1 align=center>
+<tr><td rowspan=4 valign=top width=30><b>85.</b></td>
+<td rowspan=4 valign=top><b>[Cox et al., 1998]
+</b><br>
+<P>R. Cox, B. Haskell, Y. LeCun, B. Shahraray, and L. Rabiner, "On the application of multimedia processing to telecommunications," <EM>Proceedings of the IEEE</EM>, vol. 86, no. 5, pp. 755-824, May 1998.
+<font size=2>[70 pages]</font></td>
+<td>&nbsp;</td><td><a href=lecun.bib#cox-98><img src=images/bibtex-icon-40x14.gif border=0></a></td></tr>
+<tr><td>1567KB</td><td><a href=djvu/cox-98.djvu><img src=images/djvu-icon-40x14.gif border=0></a></td></tr>
+<tr><td>1420KB</td><td><a href=psgz/cox-98.ps.gz><img src=images/psgz-icon-40x14.gif border=0></a></td></tr>
+<tr><td>1314KB</td><td><a href=pdf/cox-98.pdf><img src=images/pdf-icon-40x14.gif border=0></a></td></tr>
+</td></tr></table><br>
+<a name=rahim-bengio-lecun-97 ><table width=95% cellspacing=0 border=0  bgcolor=#f4e8d1 align=center>
+<tr><td rowspan=4 valign=top width=30><b>84.</b></td>
+<td rowspan=4 valign=top><b>[Rahim and Bengio and LeCun, 1997]
+</b><br>
+<P>M. Rahim, Y. Bengio, and Y. LeCun, "Discriminative feature and model design for automatic speech recognition," in <EM>Proc. of Eurospeech</EM>, (Rhodes, Greece), 1997.
+<font size=2>[4 pages]</font></td>
+<td>&nbsp;</td><td><a href=lecun.bib#rahim-bengio-lecun-97><img src=images/bibtex-icon-40x14.gif border=0></a></td></tr>
+<tr><td>64KB</td><td><a href=djvu/rahim-bengio-lecun-97.djvu><img src=images/djvu-icon-40x14.gif border=0></a></td></tr>
+<tr><td>46KB</td><td><a href=psgz/rahim-bengio-lecun-97.ps.gz><img src=images/psgz-icon-40x14.gif border=0></a></td></tr>
+<tr><td>159KB</td><td><a href=pdf/rahim-bengio-lecun-97.pdf><img src=images/pdf-icon-40x14.gif border=0></a></td></tr>
+</td></tr></table><br>
+<a name=cox-97 ><table width=95% cellspacing=0 border=0  bgcolor=#f4e8d1 align=center>
+<tr><td rowspan=4 valign=top width=30><b>83.</b></td>
+<td rowspan=4 valign=top><b>[Cox et al., 1997]
+</b><br>
+<P>R. Cox, B. Haskell, Y. LeCun, B. Shahraray, and L. Rabiner, "On the application of multimedia processing to telecommunications," in <EM>Proc. of International Conference on Image Processing</EM>, (San Francisco), pp. 5-8, 1997.
+<font size=2>[4 pages]</font></td>
+<td>&nbsp;</td><td><a href=lecun.bib#cox-97><img src=images/bibtex-icon-40x14.gif border=0></a></td></tr>
+<td>&nbsp;</td><td>&nbsp;</td></tr>
+<tr><td>&nbsp;</td><td>&nbsp;</td></tr>
+<tr><td>&nbsp;</td><td>&nbsp;</td></tr>
+</td></tr></table><br>
+<a name=bottou-lecun-bengio-97 ><table width=95% cellspacing=0 border=0  bgcolor=#f4e8d1 align=center>
+<tr><td rowspan=4 valign=top width=30><b>82.</b></td>
+<td rowspan=4 valign=top><b>[Bottou and LeCun and Bengio, 1997]
+</b><br>
+<P>L. Bottou, Y. LeCun, and Y. Bengio, "Global Training of Document Processing Systems using Graph Transformer Networks," in <EM>Proc. of Computer Vision and Pattern Recognition</EM>, (Puerto-Rico), pp. 490-494, 1997.
+<font size=2>[6 pages]</font></td>
+<td>&nbsp;</td><td><a href=lecun.bib#bottou-lecun-bengio-97><img src=images/bibtex-icon-40x14.gif border=0></a></td></tr>
+<tr><td>104KB</td><td><a href=djvu/bottou-lecun-bengio-97.djvu><img src=images/djvu-icon-40x14.gif border=0></a></td></tr>
+<tr><td>60KB</td><td><a href=psgz/bottou-lecun-bengio-97.ps.gz><img src=images/psgz-icon-40x14.gif border=0></a></td></tr>
+<tr><td>114KB</td><td><a href=pdf/bottou-lecun-bengio-97.pdf><img src=images/pdf-icon-40x14.gif border=0></a></td></tr>
+</td></tr></table><br>
+<a name=lecun-bottou-bengio-97 ><table width=95% cellspacing=0 border=0  bgcolor=#f4e8d1 align=center>
+<tr><td rowspan=4 valign=top width=30><b>81.</b></td>
+<td rowspan=4 valign=top><b>[LeCun and Bottou and Bengio, 1997]
+</b><br>
+<P>Y. LeCun, L. Bottou, and Y. Bengio, "Reading Checks with graph transformer networks," in <EM>International Conference on Acoustics, Speech, and Signal Processing</EM>, (Munich), pp. 151-154, 1997.
+<font size=2>[4 pages]</font></td>
+<td>&nbsp;</td><td><a href=lecun.bib#lecun-bottou-bengio-97><img src=images/bibtex-icon-40x14.gif border=0></a></td></tr>
+<tr><td>71KB</td><td><a href=djvu/lecun-bottou-bengio-97.djvu><img src=images/djvu-icon-40x14.gif border=0></a></td></tr>
+<tr><td>48KB</td><td><a href=psgz/lecun-bottou-bengio-97.ps.gz><img src=images/psgz-icon-40x14.gif border=0></a></td></tr>
+<tr><td>121KB</td><td><a href=pdf/lecun-bottou-bengio-97.pdf><img src=images/pdf-icon-40x14.gif border=0></a></td></tr>
+</td></tr></table><br>
+<a name=guyon-96 ><table width=95% cellspacing=0 border=0  bgcolor=#f4e8d1 align=center>
+<tr><td rowspan=4 valign=top width=30><b>80.</b></td>
+<td rowspan=4 valign=top><b>[Guyon and LeCun and Warwick, 1996]
+</b><br>
+<P>I. Guyon, Y. LeCun, and C. Warwick, "Usability study of text entry interfaces for personnal organizers," AT&amp;T Bell Labs, 1996.
+<font size=2>[8 pages]</font></td>
+<td>&nbsp;</td><td><a href=lecun.bib#guyon-96><img src=images/bibtex-icon-40x14.gif border=0></a></td></tr>
+<tr><td>85KB</td><td><a href=djvu/guyon-96.djvu><img src=images/djvu-icon-40x14.gif border=0></a></td></tr>
+<tr><td>1235KB</td><td><a href=psgz/guyon-96.ps.gz><img src=images/psgz-icon-40x14.gif border=0></a></td></tr>
+<tr><td>5421KB</td><td><a href=pdf/guyon-96.pdf><img src=images/pdf-icon-40x14.gif border=0></a></td></tr>
+</td></tr></table><br>
+<a name=bengio-95 ><table width=95% cellspacing=0 border=0  bgcolor=#f4e8d1 align=center>
+<tr><td rowspan=4 valign=top width=30><b>79.</b></td>
+<td rowspan=4 valign=top><b>[Bengio et al., 1995]
+</b><br>
+<P>Y. Bengio, Y. LeCun, C. Nohl, and C. Burges, "LeRec: A NN/HMM Hybrid for On-Line Handwriting Recognition," <EM>Neural Computation</EM>, vol. 7, no. 6, pp. 1289-1303, Nov. 1995.
+<font size=2>[14 pages]</font></td>
+<td>&nbsp;</td><td><a href=lecun.bib#bengio-95><img src=images/bibtex-icon-40x14.gif border=0></a></td></tr>
+<tr><td>101KB</td><td><a href=djvu/bengio-95.djvu><img src=images/djvu-icon-40x14.gif border=0></a></td></tr>
+<tr><td>65KB</td><td><a href=psgz/bengio-95.ps.gz><img src=images/psgz-icon-40x14.gif border=0></a></td></tr>
+<tr><td>208KB</td><td><a href=pdf/bengio-95.pdf><img src=images/pdf-icon-40x14.gif border=0></a></td></tr>
+</td></tr></table><br>
+<a name=lecun-95b ><table width=95% cellspacing=0 border=0  bgcolor=#f4e8d1 align=center>
+<tr><td rowspan=4 valign=top width=30><b>78.</b></td>
+<td rowspan=4 valign=top><b>[LeCun et al., 1995]
+</b><br>
+<P>Y. LeCun, L. D. Jackel, L. Bottou, A. Brunot, C. Cortes, J. S. Denker, H. Drucker, I. Guyon, U. A. Muller, E. Sackinger, P. Simard, and V. Vapnik, "Comparison of learning algorithms for handwritten digit recognition," in <EM>International Conference on Artificial Neural Networks</EM>, (F. Fogelman and P. Gallinari, eds.), (Paris), pp. 53-60, 1995.
+<font size=2>[9 pages]</font></td>
+<td>&nbsp;</td><td><a href=lecun.bib#lecun-95b><img src=images/bibtex-icon-40x14.gif border=0></a></td></tr>
+<tr><td>67KB</td><td><a href=djvu/lecun-95b.djvu><img src=images/djvu-icon-40x14.gif border=0></a></td></tr>
+<tr><td>46KB</td><td><a href=psgz/lecun-95b.ps.gz><img src=images/psgz-icon-40x14.gif border=0></a></td></tr>
+<tr><td>160KB</td><td><a href=pdf/lecun-95b.pdf><img src=images/pdf-icon-40x14.gif border=0></a></td></tr>
+</td></tr></table><br>
+<a name=lecun-95a ><table width=95% cellspacing=0 border=0  bgcolor=#f4e8d1 align=center>
+<tr><td rowspan=4 valign=top width=30><b>77.</b></td>
+<td rowspan=4 valign=top><b>[LeCun et al., 1995]
+</b><br>
+<P>Y. LeCun, L. D. Jackel, L. Bottou, C. Cortes, J. S. Denker, H. Drucker, I. Guyon, U. A. Muller, E. Sackinger, P. Simard, and V. Vapnik, "Learning Algorithms For Classification: A Comparison On Handwritten Digit Recognition," in <EM>Neural Networks: The Statistical Mechanics Perspective</EM>, (J. H. Oh, C. Kwon, and S. Cho, eds.), pp. 261-276, 1995.
+<font size=2>[16 pages]</font></td>
+<td>&nbsp;</td><td><a href=lecun.bib#lecun-95a><img src=images/bibtex-icon-40x14.gif border=0></a></td></tr>
+<tr><td>109KB</td><td><a href=djvu/lecun-95a.djvu><img src=images/djvu-icon-40x14.gif border=0></a></td></tr>
+<tr><td>114KB</td><td><a href=psgz/lecun-95a.ps.gz><img src=images/psgz-icon-40x14.gif border=0></a></td></tr>
+<tr><td>221KB</td><td><a href=pdf/lecun-95a.pdf><img src=images/pdf-icon-40x14.gif border=0></a></td></tr>
+</td></tr></table><br>
+<a name=lecun-bengio-95a ><table width=95% cellspacing=0 border=0  bgcolor=#f4e8d1 align=center>
+<tr><td rowspan=4 valign=top width=30><b>76.</b></td>
+<td rowspan=4 valign=top><b>[LeCun and Bengio, 1995]
+</b><br>
+<P>Y. LeCun and Y. Bengio, "Convolutional Networks for Images, Speech, and Time-Series," in <EM>The Handbook of Brain Theory and Neural Networks</EM>, (M. A. Arbib, ed.), 1995.
+<font size=2>[14 pages]</font></td>
+<td>&nbsp;</td><td><a href=lecun.bib#lecun-bengio-95a><img src=images/bibtex-icon-40x14.gif border=0></a></td></tr>
+<tr><td>64KB</td><td><a href=djvu/lecun-bengio-95a.djvu><img src=images/djvu-icon-40x14.gif border=0></a></td></tr>
+<tr><td>40KB</td><td><a href=psgz/lecun-bengio-95a.ps.gz><img src=images/psgz-icon-40x14.gif border=0></a></td></tr>
+<tr><td>142KB</td><td><a href=pdf/lecun-bengio-95a.pdf><img src=images/pdf-icon-40x14.gif border=0></a></td></tr>
+</td></tr></table><br>
+<a name=lecun-bengio-95b ><table width=95% cellspacing=0 border=0  bgcolor=#f4e8d1 align=center>
+<tr><td rowspan=4 valign=top width=30><b>75.</b></td>
+<td rowspan=4 valign=top><b>[LeCun and Bengio, 1995]
+</b><br>
+<P>Y. LeCun and Y. Bengio, "Pattern Recognition and Neural Networks," in <EM>The Handbook of Brain Theory and Neural Networks</EM>, (M. A. Arbib, ed.), 1995.
+<font size=2>[22 pages]</font></td>
+<td>&nbsp;</td><td><a href=lecun.bib#lecun-bengio-95b><img src=images/bibtex-icon-40x14.gif border=0></a></td></tr>
+<tr><td>97KB</td><td><a href=djvu/lecun-bengio-95b.djvu><img src=images/djvu-icon-40x14.gif border=0></a></td></tr>
+<tr><td>50KB</td><td><a href=psgz/lecun-bengio-95b.ps.gz><img src=images/psgz-icon-40x14.gif border=0></a></td></tr>
+<tr><td>183KB</td><td><a href=pdf/lecun-bengio-95b.pdf><img src=images/pdf-icon-40x14.gif border=0></a></td></tr>
+</td></tr></table><br>
+<a name=jackel-95 ><table width=95% cellspacing=0 border=0  bgcolor=#f4e8d1 align=center>
+<tr><td rowspan=4 valign=top width=30><b>74.</b></td>
+<td rowspan=4 valign=top><b>[Jackel et al., 1995]
+</b><br>
+<P>L. Jackel, M. Battista, H. Baird, J. Ben, J. Bromley, C. Burges, E. Cosatto, J. Denker, H. Graf, H. Katseff, Y. LeCun, C. Nohl, E. Sackinger, J. Shamilian, T. Shoemaker, C. Stenard, I. Strom, R. Ting, T. Wood, and Zuraw C., "Neural-Net Applications in Character Recognition and Document Analysis," in <EM>Neural-Net Applications in Telecommunications</EM>, 1995.
+<font size=2>[15 pages]</font></td>
+<td>&nbsp;</td><td><a href=lecun.bib#jackel-95><img src=images/bibtex-icon-40x14.gif border=0></a></td></tr>
+<tr><td>215KB</td><td><a href=djvu/jackel-95.djvu><img src=images/djvu-icon-40x14.gif border=0></a></td></tr>
+<tr><td>1990KB</td><td><a href=psgz/jackel-95.ps.gz><img src=images/psgz-icon-40x14.gif border=0></a></td></tr>
+<tr><td>8278KB</td><td><a href=pdf/jackel-95.pdf><img src=images/pdf-icon-40x14.gif border=0></a></td></tr>
+</td></tr></table><br>
+<a name=chiang-94a ><table width=95% cellspacing=0 border=0  bgcolor=#f4e8d1 align=center>
+<tr><td rowspan=4 valign=top width=30><b>73.</b></td>
+<td rowspan=4 valign=top><b>[Chiang et al., 1994]
+</b><br>
+<P>W Chiang, C. Cortes, L. Jackel, Y. LeCun, W. Lee, E. Pednault, and Vapnik V., "Predicting TransportPath Degradation/Failure Based on Recent Performance History," in <EM>Proc of Symposium on Intelligent Systems in Communications and Power (SISCAP '94)</EM>, 1994.
+<font size=2>[15 pages]</font></td>
+<td>&nbsp;</td><td><a href=lecun.bib#chiang-94a><img src=images/bibtex-icon-40x14.gif border=0></a></td></tr>
+<td>&nbsp;</td><td>&nbsp;</td></tr>
+<tr><td>&nbsp;</td><td>&nbsp;</td></tr>
+<tr><td>&nbsp;</td><td>&nbsp;</td></tr>
+</td></tr></table><br>
+<a name=chiang-94 ><table width=95% cellspacing=0 border=0  bgcolor=#f4e8d1 align=center>
+<tr><td rowspan=4 valign=top width=30><b>72.</b></td>
+<td rowspan=4 valign=top><b>[Chiang et al., 1994]
+</b><br>
+<P>W. Chiang, C. Cortes, L. Jackel, Y. LeCun, and W. Lee, "Accuracy limits of machine learning: predicting communication path degradation or failure," AT&amp;T Bell Labs, 1994.
+<font size=2>[10 pages]</font></td>
+<td>&nbsp;</td><td><a href=lecun.bib#chiang-94><img src=images/bibtex-icon-40x14.gif border=0></a></td></tr>
+<tr><td>154KB</td><td><a href=djvu/chiang-94.djvu><img src=images/djvu-icon-40x14.gif border=0></a></td></tr>
+<tr><td>&nbsp;</td><td>&nbsp;</td></tr>
+<tr><td>&nbsp;</td><td>&nbsp;</td></tr>
+</td></tr></table><br>
+<a name=matic-94 ><table width=95% cellspacing=0 border=0  bgcolor=#f4e8d1 align=center>
+<tr><td rowspan=4 valign=top width=30><b>71.</b></td>
+<td rowspan=4 valign=top><b>[Matic et al., 1994]
+</b><br>
+<P>N. Matic, D. Henderson, Y. Le Cun, and Y. Bengio, "Pen-based visitor registration system (PENGUIN)," in <EM>Conference Record of the Twenty-Eighth Asilomar Conference on ignals, Systems and Computers</EM>, 1994.
+<font size=2>[8 pages]</font></td>
+<td>&nbsp;</td><td><a href=lecun.bib#matic-94><img src=images/bibtex-icon-40x14.gif border=0></a></td></tr>
+<tr><td>190KB</td><td><a href=djvu/matic-94.djvu><img src=images/djvu-icon-40x14.gif border=0></a></td></tr>
+<tr><td>1360KB</td><td><a href=psgz/matic-94.ps.gz><img src=images/psgz-icon-40x14.gif border=0></a></td></tr>
+<tr><td>5863KB</td><td><a href=pdf/matic-94.pdf><img src=images/pdf-icon-40x14.gif border=0></a></td></tr>
+</td></tr></table><br>
+<a name=drucker-94a ><table width=95% cellspacing=0 border=0  bgcolor=#f4e8d1 align=center>
+<tr><td rowspan=4 valign=top width=30><b>70.</b></td>
+<td rowspan=4 valign=top><b>[Drucker et al., 1994]
+</b><br>
+<P>H. Drucker, C. Cortes, L. D. Jackel, Y. LeCun, and V. Vapnik, "Boosting and Other Ensemble Methods," <EM>Neural Computation</EM>, vol. 6, no. 6, Nov. 1994.
+<font size=2>[8 pages]</font></td>
+<td>&nbsp;</td><td><a href=lecun.bib#drucker-94a><img src=images/bibtex-icon-40x14.gif border=0></a></td></tr>
+<td>&nbsp;</td><td>&nbsp;</td></tr>
+<tr><td>&nbsp;</td><td>&nbsp;</td></tr>
+<tr><td>&nbsp;</td><td>&nbsp;</td></tr>
+</td></tr></table><br>
+<a name=bottou-94 ><table width=95% cellspacing=0 border=0  bgcolor=#f4e8d1 align=center>
+<tr><td rowspan=4 valign=top width=30><b>69.</b></td>
+<td rowspan=4 valign=top><b>[Bottou et al., 1994]
+</b><br>
+<P>L. Bottou, C. Cortes, J.S. Denker, H. Drucker, I. Guyon, L.D. Jackel, Y. LeCun, U.A. Muller, E. Sackinger, P. Simard, and V. Vapnik, "Comparison of classifier methods: a case study in handwritten digit recognition," in <EM>Proc. of the International Conference on Pattern Recognition</EM>, (IAPR, ed.), (Jerusalem), pp. 77-82, Oct. 1994.
+<font size=2>[11 pages]</font></td>
+<td>&nbsp;</td><td><a href=lecun.bib#bottou-94><img src=images/bibtex-icon-40x14.gif border=0></a></td></tr>
+<tr><td>61KB</td><td><a href=djvu/bottou-94.djvu><img src=images/djvu-icon-40x14.gif border=0></a></td></tr>
+<tr><td>213KB</td><td><a href=psgz/bottou-94.ps.gz><img src=images/psgz-icon-40x14.gif border=0></a></td></tr>
+<tr><td>151KB</td><td><a href=pdf/bottou-94.pdf><img src=images/pdf-icon-40x14.gif border=0></a></td></tr>
+</td></tr></table><br>
+<a name=simard-lecun-denker-94 ><table width=95% cellspacing=0 border=0  bgcolor=#f4e8d1 align=center>
+<tr><td rowspan=4 valign=top width=30><b>68.</b></td>
+<td rowspan=4 valign=top><b>[Simard and LeCun and Denker, 1994]
+</b><br>
+<P>P. Simard, Y. LeCun, and J. Denker, "Memory Based Character Recognition Using a Transformation Invariant Metric," in <EM>Proc. of the International Conference on Pattern Recognition</EM>, (IAPR, ed.), (Jerusalem), pp. 262-267, Oct. 1994.
+<font size=2>[14 pages]</font></td>
+<td>&nbsp;</td><td><a href=lecun.bib#simard-lecun-denker-94><img src=images/bibtex-icon-40x14.gif border=0></a></td></tr>
+<tr><td>99KB</td><td><a href=djvu/simard-lecun-denker-94.djvu><img src=images/djvu-icon-40x14.gif border=0></a></td></tr>
+<tr><td>79KB</td><td><a href=psgz/simard-lecun-denker-94.ps.gz><img src=images/psgz-icon-40x14.gif border=0></a></td></tr>
+<tr><td>204KB</td><td><a href=pdf/simard-lecun-denker-94.pdf><img src=images/pdf-icon-40x14.gif border=0></a></td></tr>
+</td></tr></table><br>
+<a name=lecun-bengio-94 ><table width=95% cellspacing=0 border=0  bgcolor=#f4e8d1 align=center>
+<tr><td rowspan=4 valign=top width=30><b>67.</b></td>
+<td rowspan=4 valign=top><b>[LeCun and Bengio, 1994]
+</b><br>
+<P>Y. LeCun and Y. Bengio, "word-level training of a handwritten word recognizer based on convolutional neural networks," in <EM>Proc. of the International Conference on Pattern Recognition</EM>, (IAPR, ed.), (Jerusalem), pp. 88-92, Oct. 1994.
+<font size=2>[5 pages]</font></td>
+<td>&nbsp;</td><td><a href=lecun.bib#lecun-bengio-94><img src=images/bibtex-icon-40x14.gif border=0></a></td></tr>
+<tr><td>70KB</td><td><a href=djvu/lecun-bengio-94.djvu><img src=images/djvu-icon-40x14.gif border=0></a></td></tr>
+<tr><td>53KB</td><td><a href=psgz/lecun-bengio-94.ps.gz><img src=images/psgz-icon-40x14.gif border=0></a></td></tr>
+<tr><td>171KB</td><td><a href=pdf/lecun-bengio-94.pdf><img src=images/pdf-icon-40x14.gif border=0></a></td></tr>
+</td></tr></table><br>
+<a name=bengio-lecun-94 ><table width=95% cellspacing=0 border=0  bgcolor=#f4e8d1 align=center>
+<tr><td rowspan=4 valign=top width=30><b>66.</b></td>
+<td rowspan=4 valign=top><b>[ Bengio and LeCun, 1994]
+</b><br>
+<P>Y. Bengio and Y. LeCun, "word normalization for on-line handwritten word recognition," in <EM>Proc. of the International Conference on Pattern Recognition</EM>, (IAPR, ed.), (Jerusalem), pp. 409-413, Oct. 1994.
+<font size=2>[5 pages]</font></td>
+<td>&nbsp;</td><td><a href=lecun.bib#bengio-lecun-94><img src=images/bibtex-icon-40x14.gif border=0></a></td></tr>
+<tr><td>53KB</td><td><a href=djvu/bengio-lecun-94.djvu><img src=images/djvu-icon-40x14.gif border=0></a></td></tr>
+<tr><td>38KB</td><td><a href=psgz/bengio-lecun-94.ps.gz><img src=images/psgz-icon-40x14.gif border=0></a></td></tr>
+<tr><td>139KB</td><td><a href=pdf/bengio-lecun-94.pdf><img src=images/pdf-icon-40x14.gif border=0></a></td></tr>
+</td></tr></table><br>
+<a name=vapnik-levin-lecun-94 ><table width=95% cellspacing=0 border=0  bgcolor=#f4e8d1 align=center>
+<tr><td rowspan=4 valign=top width=30><b>65.</b></td>
+<td rowspan=4 valign=top><b>[Vapnik and Levin and LeCun, 1994]
+</b><br>
+<P>V. Vapnik, E. Levin, and Y. LeCun, "Measuring the VC-dimension of a Learning Machine," <EM>Neural Computation</EM>, vol. 6, no. 5, pp. 851-876, 1994.
+<font size=2>[22 pages]</font></td>
+<td>&nbsp;</td><td><a href=lecun.bib#vapnik-levin-lecun-94><img src=images/bibtex-icon-40x14.gif border=0></a></td></tr>
+<tr><td>131KB</td><td><a href=djvu/vapnik-levin-lecun-94.djvu><img src=images/djvu-icon-40x14.gif border=0></a></td></tr>
+<tr><td>87KB</td><td><a href=psgz/vapnik-levin-lecun-94.ps.gz><img src=images/psgz-icon-40x14.gif border=0></a></td></tr>
+<tr><td>286KB</td><td><a href=pdf/vapnik-levin-lecun-94.pdf><img src=images/pdf-icon-40x14.gif border=0></a></td></tr>
+</td></tr></table><br>
+<a name=bengio-lecun-henderson-94 ><table width=95% cellspacing=0 border=0  bgcolor=#f4e8d1 align=center>
+<tr><td rowspan=4 valign=top width=30><b>64.</b></td>
+<td rowspan=4 valign=top><b>[Bengio and LeCun and Henderson, 1993]
+</b><br>
+<P>Y. Bengio, Y. LeCun, and D. Henderson, "Globally Trained Handwritten Word Recognizer using Spatial Representation, Space Displacement Neural Networks and Hidden Markov Models," in <EM>Advances in Neural Information Processing Systems</EM>, vol. 6, (J. Cowan and G. Tesauro, eds.), 1993.
+<font size=2>[8 pages]</font></td>
+<td>&nbsp;</td><td><a href=lecun.bib#bengio-lecun-henderson-94><img src=images/bibtex-icon-40x14.gif border=0></a></td></tr>
+<tr><td>63KB</td><td><a href=djvu/bengio-lecun-henderson-94.djvu><img src=images/djvu-icon-40x14.gif border=0></a></td></tr>
+<tr><td>41KB</td><td><a href=psgz/bengio-lecun-henderson-94.ps.gz><img src=images/psgz-icon-40x14.gif border=0></a></td></tr>
+<tr><td>142KB</td><td><a href=pdf/bengio-lecun-henderson-94.pdf><img src=images/pdf-icon-40x14.gif border=0></a></td></tr>
+</td></tr></table><br>
+<a name=bromley-94 ><table width=95% cellspacing=0 border=0  bgcolor=#f4e8d1 align=center>
+<tr><td rowspan=4 valign=top width=30><b>63.</b></td>
+<td rowspan=4 valign=top><b>[Bromley et al., 1993]
+</b><br>
+<P>J. Bromley, I. Guyon, Y. LeCun, E. Sackinger, and R. Shah, "Signature Verification using a Siamese Time Delay Neural Network," in <EM>Advances in Neural Information Processing Systems</EM>, vol. 6, (J. Cowan and G. Tesauro, eds.), 1993.
+<font size=2>[8 pages]</font></td>
+<td>&nbsp;</td><td><a href=lecun.bib#bromley-94><img src=images/bibtex-icon-40x14.gif border=0></a></td></tr>
+<tr><td>114KB</td><td><a href=djvu/bromley-94.djvu><img src=images/djvu-icon-40x14.gif border=0></a></td></tr>
+<tr><td>1671KB</td><td><a href=psgz/bromley-94.ps.gz><img src=images/psgz-icon-40x14.gif border=0></a></td></tr>
+<tr><td>3372KB</td><td><a href=pdf/bromley-94.pdf><img src=images/pdf-icon-40x14.gif border=0></a></td></tr>
+</td></tr></table><br>
+<a name=drucker-94 ><table width=95% cellspacing=0 border=0  bgcolor=#f4e8d1 align=center>
+<tr><td rowspan=4 valign=top width=30><b>62.</b></td>
+<td rowspan=4 valign=top><b>[Drucker et al., 1994]
+</b><br>
+<P>H. Drucker, C. Cortes, L. D. Jackel, Y. LeCun, and V. Vapnik, "Boosting and Other Ensemble Methods," in <EM>Proc of the 1994 Machine Learning conference</EM>, 1994.
+<font size=2>[8 pages]</font></td>
+<td>&nbsp;</td><td><a href=lecun.bib#drucker-94><img src=images/bibtex-icon-40x14.gif border=0></a></td></tr>
+<td>&nbsp;</td><td>&nbsp;</td></tr>
+<tr><td>&nbsp;</td><td>&nbsp;</td></tr>
+<tr><td>&nbsp;</td><td>&nbsp;</td></tr>
+</td></tr></table><br>
+<a name=vaillant-monrocq-lecun-94 ><table width=95% cellspacing=0 border=0  bgcolor=#f4e8d1 align=center>
+<tr><td rowspan=4 valign=top width=30><b>61.</b></td>
+<td rowspan=4 valign=top><b>[Vaillant and Monrocq and LeCun, 1994]
+</b><br>
+<P>R. Vaillant, C. Monrocq, and Y. LeCun, "Original approach for the localisation of objects in images," <EM>IEE Proc on Vision, Image, and Signal Processing</EM>, vol. 141, no. 4, pp. 245-250, Aug. 1994.
+<font size=2>[16 pages]</font></td>
+<td>&nbsp;</td><td><a href=lecun.bib#vaillant-monrocq-lecun-94><img src=images/bibtex-icon-40x14.gif border=0></a></td></tr>
+<tr><td>161KB</td><td><a href=djvu/vaillant-monrocq-lecun-94.djvu><img src=images/djvu-icon-40x14.gif border=0></a></td></tr>
+<tr><td>406KB</td><td><a href=psgz/vaillant-monrocq-lecun-94.ps.gz><img src=images/psgz-icon-40x14.gif border=0></a></td></tr>
+<tr><td>235KB</td><td><a href=pdf/vaillant-monrocq-lecun-94.pdf><img src=images/pdf-icon-40x14.gif border=0></a></td></tr>
+</td></tr></table><br>
+<a name=vaillant-monrocq-lecun-93 ><table width=95% cellspacing=0 border=0  bgcolor=#f4e8d1 align=center>
+<tr><td rowspan=4 valign=top width=30><b>60.</b></td>
+<td rowspan=4 valign=top><b>[Vaillant and Monrocq and LeCun, 1993]
+</b><br>
+<P>R. Vaillant, C. Monrocq, and Y. LeCun, "An Original approach for the localisation of objects in images," in <EM>International Conference on Artificial Neural Networks</EM>, pp. 26-30, 1993.
+<font size=2>[16 pages]</font></td>
+<td>&nbsp;</td><td><a href=lecun.bib#vaillant-monrocq-lecun-93><img src=images/bibtex-icon-40x14.gif border=0></a></td></tr>
+<td>&nbsp;</td><td>&nbsp;</td></tr>
+<tr><td>&nbsp;</td><td>&nbsp;</td></tr>
+<tr><td>&nbsp;</td><td>&nbsp;</td></tr>
+</td></tr></table><br>
+<a name=burges-93 ><table width=95% cellspacing=0 border=0  bgcolor=#f4e8d1 align=center>
+<tr><td rowspan=4 valign=top width=30><b>59.</b></td>
+<td rowspan=4 valign=top><b>[Burges et al., 1993]
+</b><br>
+<P>C.J. Burges, J. Ben, J.S. Denker, and Y. and. Nohl C.R. LeCun, "Off Line Recognition of Handwritten Postal Words Using Neural Networks.," <EM>International Journal of Pattern Recognition and Artificial Intelligence</EM>, vol. 7, no. 4, pp. 689-704, 1993.
+<font size=2>[16 pages]</font></td>
+<td>&nbsp;</td><td><a href=lecun.bib#burges-93><img src=images/bibtex-icon-40x14.gif border=0></a></td></tr>
+<td>&nbsp;</td><td>&nbsp;</td></tr>
+<tr><td>&nbsp;</td><td>&nbsp;</td></tr>
+<tr><td>&nbsp;</td><td>&nbsp;</td></tr>
+</td></tr></table><br>
+<a name=bromley-93 ><table width=95% cellspacing=0 border=0  bgcolor=#f4e8d1 align=center>
+<tr><td rowspan=4 valign=top width=30><b>58.</b></td>
+<td rowspan=4 valign=top><b>[Bromley et al., 1993]
+</b><br>
+<P>J. Bromley, J. W. Bentz, L. Bottou, I. Guyon, Y. LeCun, C. Moore, E. Sackinger, and R. Shah, "Signature Verification using a Siamese Time Delay Neural Network," <EM>International Journal of Pattern Recognition and Artificial Intelligence</EM>, vol. 7, no. 4, Aug. 1993.
+<font size=2>[22 pages]</font></td>
+<td>&nbsp;</td><td><a href=lecun.bib#bromley-93><img src=images/bibtex-icon-40x14.gif border=0></a></td></tr>
+<tr><td>186KB</td><td><a href=djvu/bromley-93.djvu><img src=images/djvu-icon-40x14.gif border=0></a></td></tr>
+<tr><td>&nbsp;</td><td>&nbsp;</td></tr>
+<tr><td>&nbsp;</td><td>&nbsp;</td></tr>
+</td></tr></table><br>
+<a name=lecun-93 ><table width=95% cellspacing=0 border=0  bgcolor=#f4e8d1 align=center>
+<tr><td rowspan=4 valign=top width=30><b>57.</b></td>
+<td rowspan=4 valign=top><b>[LeCun et al., 1993]
+</b><br>
+<P>Y. LeCun, Y. Bengio, D. Henderson, A. Weisbuch, H. Weissman, and Jackel L., "on-line handwriting recognition with neural networks: spatial representation versus temporal representation.," in <EM>Proc. International Conference on handwriting and drawing.</EM>, 1993.
+<font size=2>[3 pages]</font></td>
+<td>&nbsp;</td><td><a href=lecun.bib#lecun-93><img src=images/bibtex-icon-40x14.gif border=0></a></td></tr>
+<tr><td>43KB</td><td><a href=djvu/lecun-93.djvu><img src=images/djvu-icon-40x14.gif border=0></a></td></tr>
+<tr><td>40KB</td><td><a href=psgz/lecun-93.ps.gz><img src=images/psgz-icon-40x14.gif border=0></a></td></tr>
+<tr><td>111KB</td><td><a href=pdf/lecun-93.pdf><img src=images/pdf-icon-40x14.gif border=0></a></td></tr>
+</td></tr></table><br>
+<a name=wu-93 ><table width=95% cellspacing=0 border=0  bgcolor=#f4e8d1 align=center>
+<tr><td rowspan=4 valign=top width=30><b>56.</b></td>
+<td rowspan=4 valign=top><b>[Wu et al., 1993]
+</b><br>
+<P>Q.Z. Wu, Y. LeCun, L. D. Jackel, and B.S. Jeng, "on-line recognition of limited vocabulary chinese character using multiple convolutional neural networks," in <EM>Proc. of the 1993 IEEE International Symposium on circuits and systems</EM>, pp. 2435-2438, 1993.
+<font size=2>[4 pages]</font></td>
+<td>&nbsp;</td><td><a href=lecun.bib#wu-93><img src=images/bibtex-icon-40x14.gif border=0></a></td></tr>
+<tr><td>68KB</td><td><a href=djvu/wu-93.djvu><img src=images/djvu-icon-40x14.gif border=0></a></td></tr>
+<tr><td>185KB</td><td><a href=psgz/wu-93.ps.gz><img src=images/psgz-icon-40x14.gif border=0></a></td></tr>
+<tr><td>171KB</td><td><a href=pdf/wu-93.pdf><img src=images/pdf-icon-40x14.gif border=0></a></td></tr>
+</td></tr></table><br>
+<a name=denker-lecun-93 ><table width=95% cellspacing=0 border=0  bgcolor=#f4e8d1 align=center>
+<tr><td rowspan=4 valign=top width=30><b>55.</b></td>
+<td rowspan=4 valign=top><b>[LeCun and Denker, 1992]
+</b><br>
+<P>Yann LeCun and John S. Denker, "Natural versus Universal Probability Complexity, and Entropy," in <EM>IEEE Workshop on the Physics of Computation</EM>, pp. 122-127, 1992.
+<font size=2>[10 pages]</font></td>
+<td>&nbsp;</td><td><a href=lecun.bib#denker-lecun-93><img src=images/bibtex-icon-40x14.gif border=0></a></td></tr>
+<tr><td>100KB</td><td><a href=djvu/denker-lecun-93.djvu><img src=images/djvu-icon-40x14.gif border=0></a></td></tr>
+<tr><td>1686KB</td><td><a href=psgz/denker-lecun-93.ps.gz><img src=images/psgz-icon-40x14.gif border=0></a></td></tr>
+<tr><td>6911KB</td><td><a href=pdf/denker-lecun-93.pdf><img src=images/pdf-icon-40x14.gif border=0></a></td></tr>
+</td></tr></table><br>
+<a name=simard-lecun-denker-93 ><table width=95% cellspacing=0 border=0  bgcolor=#f4e8d1 align=center>
+<tr><td rowspan=4 valign=top width=30><b>54.</b></td>
+<td rowspan=4 valign=top><b>[Simard and LeCun and Denker J., 1993]
+</b><br>
+<P>P. Simard, Y. LeCun, and Denker J., "efficient pattern recognition using a new transformation distance," in <EM>Advances in Neural Information Processing Systems</EM>, vol. 5, (S. Hanson, J. Cowan, and L. Giles, eds.), 1993.
+<font size=2>[9 pages]</font></td>
+<td>&nbsp;</td><td><a href=lecun.bib#simard-lecun-denker-93><img src=images/bibtex-icon-40x14.gif border=0></a></td></tr>
+<tr><td>78KB</td><td><a href=djvu/simard-lecun-denker-93.djvu><img src=images/djvu-icon-40x14.gif border=0></a></td></tr>
+<tr><td>66KB</td><td><a href=psgz/simard-lecun-denker-93.ps.gz><img src=images/psgz-icon-40x14.gif border=0></a></td></tr>
+<tr><td>164KB</td><td><a href=pdf/simard-lecun-denker-93.pdf><img src=images/pdf-icon-40x14.gif border=0></a></td></tr>
+</td></tr></table><br>
+<a name=lecun-simard-pearlmutter-93 ><table width=95% cellspacing=0 border=0  bgcolor=#f4e8d1 align=center>
+<tr><td rowspan=4 valign=top width=30><b>53.</b></td>
+<td rowspan=4 valign=top><b>[LeCun and Simard and Pearlmutter, 1993]
+</b><br>
+<P>Y. LeCun, P. Simard, and B. Pearlmutter, "Automatic learning rate maximization by on-line estimation of the Hessian's eigenvectors," in <EM>Advances in Neural Information Processing Systems</EM>, vol. 5, (S. Hanson, J. Cowan, and L. Giles, eds.), 1993.
+<font size=2>[8 pages]</font></td>
+<td>&nbsp;</td><td><a href=lecun.bib#lecun-simard-pearlmutter-93><img src=images/bibtex-icon-40x14.gif border=0></a></td></tr>
+<tr><td>63KB</td><td><a href=djvu/lecun-simard-pearlmutter-93.djvu><img src=images/djvu-icon-40x14.gif border=0></a></td></tr>
+<tr><td>57KB</td><td><a href=psgz/lecun-simard-pearlmutter-93.ps.gz><img src=images/psgz-icon-40x14.gif border=0></a></td></tr>
+<tr><td>156KB</td><td><a href=pdf/lecun-simard-pearlmutter-93.pdf><img src=images/pdf-icon-40x14.gif border=0></a></td></tr>
+</td></tr></table><br>
+<a name=lecun-92a ><table width=95% cellspacing=0 border=0  bgcolor=#f4e8d1 align=center>
+<tr><td rowspan=4 valign=top width=30><b>52.</b></td>
+<td rowspan=4 valign=top><b>[LeCun et al., 1992]
+</b><br>
+<P>Y. LeCun, B. Boser, J. S. Denker, D. Henderson, R. E. Howard, W. Hubbard, and L. D. Jackel, "Handwritten digit recognition with a back-propagation network," in <EM>Neural Netwotks, current applications</EM>, (Lisboa P.G.J., ed.), 1992.
+<font size=2>[8 pages]</font></td>
+<td>&nbsp;</td><td><a href=lecun.bib#lecun-92a><img src=images/bibtex-icon-40x14.gif border=0></a></td></tr>
+<td>&nbsp;</td><td>&nbsp;</td></tr>
+<tr><td>&nbsp;</td><td>&nbsp;</td></tr>
+<tr><td>&nbsp;</td><td>&nbsp;</td></tr>
+</td></tr></table><br>
+<a name=simard-92a ><table width=95% cellspacing=0 border=0  bgcolor=#f4e8d1 align=center>
+<tr><td rowspan=4 valign=top width=30><b>51.</b></td>
+<td rowspan=4 valign=top><b>[Simard et al., 1992]
+</b><br>
+<P>P. Simard, Y. LeCun, J. Denker, and B. Victorri, "An efficient algorithm for learning invariances in adaptive classifiers," in <EM>Proc. of International Conference on Pattern Recognition, The Hague</EM>, pp. 651-655, 1992.
+<font size=2>[8 pages]</font></td>
+<td>&nbsp;</td><td><a href=lecun.bib#simard-92a><img src=images/bibtex-icon-40x14.gif border=0></a></td></tr>
+<td>&nbsp;</td><td>&nbsp;</td></tr>
+<tr><td>&nbsp;</td><td>&nbsp;</td></tr>
+<tr><td>&nbsp;</td><td>&nbsp;</td></tr>
+</td></tr></table><br>
+<a name=drucker-lecun-92 ><table width=95% cellspacing=0 border=0  bgcolor=#f4e8d1 align=center>
+<tr><td rowspan=4 valign=top width=30><b>50.</b></td>
+<td rowspan=4 valign=top><b>[Drucker and LeCun, 1992]
+</b><br>
+<P>H. Drucker and Y LeCun, "Improving Generalization Performance Using Double Backpropagation," <EM>IEEE Transaction on Neural Networks</EM>, vol. 3, no. 6, pp. 991-997, 1992.
+<font size=2>[7 pages]</font></td>
+<td>&nbsp;</td><td><a href=lecun.bib#drucker-lecun-92><img src=images/bibtex-icon-40x14.gif border=0></a></td></tr>
+<tr><td>174KB</td><td><a href=djvu/drucker-lecun-92.djvu><img src=images/djvu-icon-40x14.gif border=0></a></td></tr>
+<tr><td>570KB</td><td><a href=psgz/drucker-lecun-92.ps.gz><img src=images/psgz-icon-40x14.gif border=0></a></td></tr>
+<tr><td>546KB</td><td><a href=pdf/drucker-lecun-92.pdf><img src=images/pdf-icon-40x14.gif border=0></a></td></tr>
+</td></tr></table><br>
+<a name=matan-92 ><table width=95% cellspacing=0 border=0  bgcolor=#f4e8d1 align=center>
+<tr><td rowspan=4 valign=top width=30><b>49.</b></td>
+<td rowspan=4 valign=top><b>[Matan et al., 1992]
+</b><br>
+<P>O. Matan, J. Bromley, C. Burges, J. Denker, L. Jackel, Y. LeCun, E Pednault, W. Satterfield, C Stenard, and T. Thompson, "Reading Handwritten Digits: A Zip Code Recognition System.," <EM>IEEE Computer</EM>, vol. 25, no. 7, pp. 59-63, July 1992.
+<font size=2>[33 pages]</font></td>
+<td>&nbsp;</td><td><a href=lecun.bib#matan-92><img src=images/bibtex-icon-40x14.gif border=0></a></td></tr>
+<tr><td>325KB</td><td><a href=djvu/matan-92.djvu><img src=images/djvu-icon-40x14.gif border=0></a></td></tr>
+<tr><td>3529KB</td><td><a href=psgz/matan-92.ps.gz><img src=images/psgz-icon-40x14.gif border=0></a></td></tr>
+<tr><td>15723KB</td><td><a href=pdf/matan-92.pdf><img src=images/pdf-icon-40x14.gif border=0></a></td></tr>
+</td></tr></table><br>
+<a name=lecun-92b ><table width=95% cellspacing=0 border=0  bgcolor=#f4e8d1 align=center>
+<tr><td rowspan=4 valign=top width=30><b>48.</b></td>
+<td rowspan=4 valign=top><b>[LeCun, 1992]
+</b><br>
+<P>Y. LeCun, "A theoretical framework for Back-Propagation," in <EM>Artificial Neural Networks: concepts and theory</EM>, (P. Mehra and B. Wah, eds.), (Los Alamitos, CA), 1992.
+<font size=2>[8 pages]</font></td>
+<td>&nbsp;</td><td><a href=lecun.bib#lecun-92b><img src=images/bibtex-icon-40x14.gif border=0></a></td></tr>
+<tr><td>109KB</td><td><a href=djvu/lecun-92b.djvu><img src=images/djvu-icon-40x14.gif border=0></a></td></tr>
+<tr><td>1581KB</td><td><a href=psgz/lecun-92b.ps.gz><img src=images/psgz-icon-40x14.gif border=0></a></td></tr>
+<tr><td>6282KB</td><td><a href=pdf/lecun-92b.pdf><img src=images/pdf-icon-40x14.gif border=0></a></td></tr>
+</td></tr></table><br>
+<a name=lecun-92 ><table width=95% cellspacing=0 border=0  bgcolor=#f4e8d1 align=center>
+<tr><td rowspan=4 valign=top width=30><b>47.</b></td>
+<td rowspan=4 valign=top><b>[LeCun et al., 1992]
+</b><br>
+<P>Y. LeCun, L. D. Jackel, B. Boser, J. S. Denker, H. P. Graf, I. Guyon, D. Henderson, R. E. Howard, and W. Hubbard, "Handwritten Digit Recognition: Applications of Neural Net Chips and Automatic Learning," in <EM>Artificial Neural Networks</EM>, (E. Sanchez-Sinencio and C. Lau, eds.), pp. 463-468, 1992.
+<font size=2>[8 pages]</font></td>
+<td>&nbsp;</td><td><a href=lecun.bib#lecun-92><img src=images/bibtex-icon-40x14.gif border=0></a></td></tr>
+<td>&nbsp;</td><td>&nbsp;</td></tr>
+<tr><td>&nbsp;</td><td>&nbsp;</td></tr>
+<tr><td>&nbsp;</td><td>&nbsp;</td></tr>
+</td></tr></table><br>
+<a name=saeckinger-92 ><table width=95% cellspacing=0 border=0  bgcolor=#f4e8d1 align=center>
+<tr><td rowspan=4 valign=top width=30><b>46.</b></td>
+<td rowspan=4 valign=top><b>[Eduard Sackinger et al., 1992]
+</b><br>
+<P>Eduard Sackinger, Bernhard Boser, Jane Bromley, Yann LeCun, and Lawrence D. Jackel, "Application of the ANNA Neural Network Chip to High-Speed Character Recognition," <EM>IEEE Transaction on Neural Networks</EM>, vol. 3, no. 2, pp. 498-505, Mar. 1992.
+<font size=2>[21 pages]</font></td>
+<td>&nbsp;</td><td><a href=lecun.bib#saeckinger-92><img src=images/bibtex-icon-40x14.gif border=0></a></td></tr>
+<tr><td>204KB</td><td><a href=djvu/saeckinger-92.djvu><img src=images/djvu-icon-40x14.gif border=0></a></td></tr>
+<tr><td>2080KB</td><td><a href=psgz/saeckinger-92.ps.gz><img src=images/psgz-icon-40x14.gif border=0></a></td></tr>
+<tr><td>9108KB</td><td><a href=pdf/saeckinger-92.pdf><img src=images/pdf-icon-40x14.gif border=0></a></td></tr>
+</td></tr></table><br>
+<a name=boser-92 ><table width=95% cellspacing=0 border=0  bgcolor=#f4e8d1 align=center>
+<tr><td rowspan=4 valign=top width=30><b>45.</b></td>
+<td rowspan=4 valign=top><b>[Boser et al., 1991]
+</b><br>
+<P>B. Boser, E. Sackinger, J. Bromley, Y. LeCun, and L. Jackel, "An analog neural network processor with programmable topology," <EM>IEEE Journal of Solid-State Circuits</EM>, vol. 26, no. 12, pp. 2017-2025, Dec. 1991.
+<font size=2>[9 pages]</font></td>
+<td>&nbsp;</td><td><a href=lecun.bib#boser-92><img src=images/bibtex-icon-40x14.gif border=0></a></td></tr>
+<tr><td>222KB</td><td><a href=djvu/boser-92.djvu><img src=images/djvu-icon-40x14.gif border=0></a></td></tr>
+<tr><td>2229KB</td><td><a href=psgz/boser-92.ps.gz><img src=images/psgz-icon-40x14.gif border=0></a></td></tr>
+<tr><td>8321KB</td><td><a href=pdf/boser-92.pdf><img src=images/pdf-icon-40x14.gif border=0></a></td></tr>
+</td></tr></table><br>
+<a name=boser-92a ><table width=95% cellspacing=0 border=0  bgcolor=#f4e8d1 align=center>
+<tr><td rowspan=4 valign=top width=30><b>44.</b></td>
+<td rowspan=4 valign=top><b>[Boser et al., 1992]
+</b><br>
+<P>B. Boser, E. Sackinger, J. Bromley, Y. LeCun, and L. Jackel, "Hardware requirements for neural network pattern classifiers," <EM>IEEE Micro</EM>, vol. 12, no. 1, pp. 32-40, Feb. 1992.
+<font size=2>[9 pages]</font></td>
+<td>&nbsp;</td><td><a href=lecun.bib#boser-92a><img src=images/bibtex-icon-40x14.gif border=0></a></td></tr>
+<tr><td>313KB</td><td><a href=djvu/boser-92a.djvu><img src=images/djvu-icon-40x14.gif border=0></a></td></tr>
+<tr><td>777KB</td><td><a href=psgz/boser-92a.ps.gz><img src=images/psgz-icon-40x14.gif border=0></a></td></tr>
+<tr><td>774KB</td><td><a href=pdf/boser-92a.pdf><img src=images/pdf-icon-40x14.gif border=0></a></td></tr>
+</td></tr></table><br>
+<a name=matan-92a ><table width=95% cellspacing=0 border=0  bgcolor=#f4e8d1 align=center>
+<tr><td rowspan=4 valign=top width=30><b>43.</b></td>
+<td rowspan=4 valign=top><b>[Ofer Matan et al., 1992]
+</b><br>
+<P>Ofer Matan, Christopher J. C. Burges, Yann LeCun, and John S. Denker, "Multi-Digit Recognition Using a Space Displacement Neural Network," in <EM>Neural Information Processing Systems</EM>, vol. 4, (J. M. Moody, S. J. Hanson, and R. P. Lippman, eds.), 1992.
+<font size=2>[8 pages]</font></td>
+<td>&nbsp;</td><td><a href=lecun.bib#matan-92a><img src=images/bibtex-icon-40x14.gif border=0></a></td></tr>
+<tr><td>109KB</td><td><a href=djvu/matan-92a.djvu><img src=images/djvu-icon-40x14.gif border=0></a></td></tr>
+<tr><td>50KB</td><td><a href=psgz/matan-92a.ps.gz><img src=images/psgz-icon-40x14.gif border=0></a></td></tr>
+<tr><td>133KB</td><td><a href=pdf/matan-92a.pdf><img src=images/pdf-icon-40x14.gif border=0></a></td></tr>
+</td></tr></table><br>
+<a name=burges-92 ><table width=95% cellspacing=0 border=0  bgcolor=#f4e8d1 align=center>
+<tr><td rowspan=4 valign=top width=30><b>42.</b></td>
+<td rowspan=4 valign=top><b>[Burges et al., 1992]
+</b><br>
+<P>C. J. C. Burges, O. Matan, Y LeCun, J. S. Denker, L. D. Jackel, C. E. Stenard, C. R. Nohl, and J. I. Ben, "Shortest path segmentation: A method for training a neural network to recognize character strings," in <EM>Proceedings of the 1992 International Joint Conference on Neural Networks</EM>, (Baltimore, Maryland), pp. 165-172, 1992.
+<font size=2>[8 pages]</font></td>
+<td>&nbsp;</td><td><a href=lecun.bib#burges-92><img src=images/bibtex-icon-40x14.gif border=0></a></td></tr>
+<tr><td>200KB</td><td><a href=djvu/burges-92.djvu><img src=images/djvu-icon-40x14.gif border=0></a></td></tr>
+<tr><td>534KB</td><td><a href=psgz/burges-92.ps.gz><img src=images/psgz-icon-40x14.gif border=0></a></td></tr>
+<tr><td>527KB</td><td><a href=pdf/burges-92.pdf><img src=images/pdf-icon-40x14.gif border=0></a></td></tr>
+</td></tr></table><br>
+<a name=simard-lecun-92 ><table width=95% cellspacing=0 border=0  bgcolor=#f4e8d1 align=center>
+<tr><td rowspan=4 valign=top width=30><b>41.</b></td>
+<td rowspan=4 valign=top><b>[Simard and LeCun, 1992]
+</b><br>
+<P>P. Simard and Y. LeCun, "Reverse TDNN: an architecture for trajectory generation," in <EM>Advances in Neural Information Processing Systems 4 (NIPS*91)</EM>, (J. M. Moody, S. J. Hanson, and R. P. Lippman, eds.), (Denver, CO), 1992.
+<font size=2>[11 pages]</font></td>
+<td>&nbsp;</td><td><a href=lecun.bib#simard-lecun-92><img src=images/bibtex-icon-40x14.gif border=0></a></td></tr>
+<tr><td>92KB</td><td><a href=djvu/simard-lecun-92.djvu><img src=images/djvu-icon-40x14.gif border=0></a></td></tr>
+<tr><td>85KB</td><td><a href=psgz/simard-lecun-92.ps.gz><img src=images/psgz-icon-40x14.gif border=0></a></td></tr>
+<tr><td>230KB</td><td><a href=pdf/simard-lecun-92.pdf><img src=images/pdf-icon-40x14.gif border=0></a></td></tr>
+</td></tr></table><br>
+<a name=simard-92 ><table width=95% cellspacing=0 border=0  bgcolor=#f4e8d1 align=center>
+<tr><td rowspan=4 valign=top width=30><b>40.</b></td>
+<td rowspan=4 valign=top><b>[Simard et al., 1992]
+</b><br>
+<P>P. Simard, B. Victorri, Y. LeCun, and J. Denker, "Tangent Prop: a formalism for specifying selected invariances in adaptive networks," in <EM>Advances in Neural Information Processing Systems 4 (NIPS*91)</EM>, (J. M. Moody, S. J. Hanson, and R. P. Lippman, eds.), (Denver, CO), 1992.
+<font size=2>[9 pages]</font></td>
+<td>&nbsp;</td><td><a href=lecun.bib#simard-92><img src=images/bibtex-icon-40x14.gif border=0></a></td></tr>
+<tr><td>62KB</td><td><a href=djvu/simard-92.djvu><img src=images/djvu-icon-40x14.gif border=0></a></td></tr>
+<tr><td>57KB</td><td><a href=psgz/simard-92.ps.gz><img src=images/psgz-icon-40x14.gif border=0></a></td></tr>
+<tr><td>136KB</td><td><a href=pdf/simard-92.pdf><img src=images/pdf-icon-40x14.gif border=0></a></td></tr>
+</td></tr></table><br>
+<a name=guyon-92 ><table width=95% cellspacing=0 border=0  bgcolor=#f4e8d1 align=center>
+<tr><td rowspan=4 valign=top width=30><b>39.</b></td>
+<td rowspan=4 valign=top><b>[Guyon et al., 1992]
+</b><br>
+<P>I. Guyon, D. Henderson, P. Albrecht, Y. LeCun, and J. Denker, "writer independentand writer adaptive neural network for on-line character recognition," in <EM>From Pixels to Features III: Frontiers in handwriting recognition</EM>, (S. Impedovo and J.C. Simon, eds.), pp. 493-506, 1992.
+<font size=2>[16 pages]</font></td>
+<td>&nbsp;</td><td><a href=lecun.bib#guyon-92><img src=images/bibtex-icon-40x14.gif border=0></a></td></tr>
+<tr><td>186KB</td><td><a href=djvu/guyon-92.djvu><img src=images/djvu-icon-40x14.gif border=0></a></td></tr>
+<tr><td>&nbsp;</td><td>&nbsp;</td></tr>
+<tr><td>&nbsp;</td><td>&nbsp;</td></tr>
+</td></tr></table><br>
+<a name=boser-91 ><table width=95% cellspacing=0 border=0  bgcolor=#f4e8d1 align=center>
+<tr><td rowspan=4 valign=top width=30><b>38.</b></td>
+<td rowspan=4 valign=top><b>[Boser et al., 1991]
+</b><br>
+<P>B.E. Boser, E. Sackinger, J. Bromley, Y. LeCun, R.E. Howard, and L.D. Jackel, "An analog neural network processor and its application to high-speed character recognition," in <EM>Proceedings of the International Joint Conference on Neural Networks</EM>, (Seattle, WA), pp. 415-420, July 1991.
+<font size=2>[6 pages]</font></td>
+<td>&nbsp;</td><td><a href=lecun.bib#boser-91><img src=images/bibtex-icon-40x14.gif border=0></a></td></tr>
+<tr><td>153KB</td><td><a href=djvu/boser-91.djvu><img src=images/djvu-icon-40x14.gif border=0></a></td></tr>
+<tr><td>518KB</td><td><a href=psgz/boser-91.ps.gz><img src=images/psgz-icon-40x14.gif border=0></a></td></tr>
+<tr><td>524KB</td><td><a href=pdf/boser-91.pdf><img src=images/pdf-icon-40x14.gif border=0></a></td></tr>
+</td></tr></table><br>
+<a name=drucker-lecun-91a ><table width=95% cellspacing=0 border=0  bgcolor=#f4e8d1 align=center>
+<tr><td rowspan=4 valign=top width=30><b>37.</b></td>
+<td rowspan=4 valign=top><b>[Drucker and LeCun, 1991]
+</b><br>
+<P>H. Drucker and Y LeCun, "Improving Generalization Performance in Character Recognition," in <EM>Proceedings of the IEEE Workshop on Neural Networks for Signal Processing</EM>, pp. 198-207, 1991.
+<font size=2>[10 pages]</font></td>
+<td>&nbsp;</td><td><a href=lecun.bib#drucker-lecun-91a><img src=images/bibtex-icon-40x14.gif border=0></a></td></tr>
+<tr><td>96KB</td><td><a href=djvu/drucker-lecun-91a.djvu><img src=images/djvu-icon-40x14.gif border=0></a></td></tr>
+<tr><td>1119KB</td><td><a href=psgz/drucker-lecun-91a.ps.gz><img src=images/psgz-icon-40x14.gif border=0></a></td></tr>
+<tr><td>4605KB</td><td><a href=pdf/drucker-lecun-91a.pdf><img src=images/pdf-icon-40x14.gif border=0></a></td></tr>
+</td></tr></table><br>
+<a name=drucker-lecun-91 ><table width=95% cellspacing=0 border=0  bgcolor=#f4e8d1 align=center>
+<tr><td rowspan=4 valign=top width=30><b>36.</b></td>
+<td rowspan=4 valign=top><b>[Drucker and LeCun, 1991]
+</b><br>
+<P>H. Drucker and Y LeCun, "Double Backpropagation: Increasing Generalization Performance," in <EM>Proceedings of the International Joint Conference on Neural Networks</EM>, (Seattle, WA), pp. 145-150, July 1991.
+<font size=2>[6 pages]</font></td>
+<td>&nbsp;</td><td><a href=lecun.bib#drucker-lecun-91><img src=images/bibtex-icon-40x14.gif border=0></a></td></tr>
+<tr><td>95KB</td><td><a href=djvu/drucker-lecun-91.djvu><img src=images/djvu-icon-40x14.gif border=0></a></td></tr>
+<tr><td>319KB</td><td><a href=psgz/drucker-lecun-91.ps.gz><img src=images/psgz-icon-40x14.gif border=0></a></td></tr>
+<tr><td>302KB</td><td><a href=pdf/drucker-lecun-91.pdf><img src=images/pdf-icon-40x14.gif border=0></a></td></tr>
+</td></tr></table><br>
+<a name=kanter-lecun-solla-91 ><table width=95% cellspacing=0 border=0  bgcolor=#f4e8d1 align=center>
+<tr><td rowspan=4 valign=top width=30><b>35.</b></td>
+<td rowspan=4 valign=top><b>[Kanter and LeCun and Solla, 1991]
+</b><br>
+<P>I. Kanter, Y. LeCun, and S. Solla, "Second-order properties of error surfaces: learning time and generalization," in <EM>Advances in Neural Information Processing Systems 3 (NIPS*90)</EM>, (R. Lippmann, J. Moody, and D. Touretzky, eds.), (Denver, CO), Apr. 1991.
+<font size=2>[7 pages]</font></td>
+<td>&nbsp;</td><td><a href=lecun.bib#kanter-lecun-solla-91><img src=images/bibtex-icon-40x14.gif border=0></a></td></tr>
+<tr><td>70KB</td><td><a href=djvu/kanter-lecun-solla-91.djvu><img src=images/djvu-icon-40x14.gif border=0></a></td></tr>
+<tr><td>1241KB</td><td><a href=psgz/kanter-lecun-solla-91.ps.gz><img src=images/psgz-icon-40x14.gif border=0></a></td></tr>
+<tr><td>5301KB</td><td><a href=pdf/kanter-lecun-solla-91.pdf><img src=images/pdf-icon-40x14.gif border=0></a></td></tr>
+</td></tr></table><br>
+<a name=denker-lecun-91b ><table width=95% cellspacing=0 border=0  bgcolor=#f4e8d1 align=center>
+<tr><td rowspan=4 valign=top width=30><b>34.</b></td>
+<td rowspan=4 valign=top><b>[Denker and LeCun, 1991]
+</b><br>
+<P>J. S. Denker and Y. LeCun, "transforming neural-net output levels to probability distributions," AT&amp;T Bell Laboratories, 1991.
+<font size=2>[15 pages]</font></td>
+<td>&nbsp;</td><td><a href=lecun.bib#denker-lecun-91b><img src=images/bibtex-icon-40x14.gif border=0></a></td></tr>
+<tr><td>134KB</td><td><a href=djvu/denker-lecun-91b.djvu><img src=images/djvu-icon-40x14.gif border=0></a></td></tr>
+<tr><td>1945KB</td><td><a href=psgz/denker-lecun-91b.ps.gz><img src=images/psgz-icon-40x14.gif border=0></a></td></tr>
+<tr><td>8288KB</td><td><a href=pdf/denker-lecun-91b.pdf><img src=images/pdf-icon-40x14.gif border=0></a></td></tr>
+</td></tr></table><br>
+<a name=denker-lecun-91 ><table width=95% cellspacing=0 border=0  bgcolor=#f4e8d1 align=center>
+<tr><td rowspan=4 valign=top width=30><b>33.</b></td>
+<td rowspan=4 valign=top><b>[Denker and LeCun, 1991]
+</b><br>
+<P>J. S. Denker and Y. LeCun, "transforming neural-net output levels to probability distributions," in <EM>Advances in Neural Information Processing Systems 3 (NIPS*90)</EM>, (R. Lippmann, J. Moody, and D. Touretzky, eds.), (Denver, CO), Apr. 1991.
+<font size=2>[14 pages]</font></td>
+<td>&nbsp;</td><td><a href=lecun.bib#denker-lecun-91><img src=images/bibtex-icon-40x14.gif border=0></a></td></tr>
+<tr><td>87KB</td><td><a href=djvu/denker-lecun-91.djvu><img src=images/djvu-icon-40x14.gif border=0></a></td></tr>
+<tr><td>145KB</td><td><a href=psgz/denker-lecun-91.ps.gz><img src=images/psgz-icon-40x14.gif border=0></a></td></tr>
+<tr><td>253KB</td><td><a href=pdf/denker-lecun-91.pdf><img src=images/pdf-icon-40x14.gif border=0></a></td></tr>
+</td></tr></table><br>
+<a name=guyon-91 ><table width=95% cellspacing=0 border=0  bgcolor=#f4e8d1 align=center>
+<tr><td rowspan=4 valign=top width=30><b>32.</b></td>
+<td rowspan=4 valign=top><b>[Guyon et al., 1991]
+</b><br>
+<P>I. Guyon, P. Albrecht, Y. LeCun, J. S. Denker, and Hubbard W., "design of a neural network character recognizer for a touch terminal," <EM>Pattern Recognition</EM>, vol. 24, no. 2, pp. 105-119, 1991.
+<font size=2>[15 pages]</font></td>
+<td>&nbsp;</td><td><a href=lecun.bib#guyon-91><img src=images/bibtex-icon-40x14.gif border=0></a></td></tr>
+<tr><td>293KB</td><td><a href=djvu/guyon-91.djvu><img src=images/djvu-icon-40x14.gif border=0></a></td></tr>
+<tr><td>2581KB</td><td><a href=psgz/guyon-91.ps.gz><img src=images/psgz-icon-40x14.gif border=0></a></td></tr>
+<tr><td>&nbsp;</td><td>&nbsp;</td></tr>
+</td></tr></table><br>
+<a name=lecun-kanter-solla-91 ><table width=95% cellspacing=0 border=0  bgcolor=#f4e8d1 align=center>
+<tr><td rowspan=4 valign=top width=30><b>31.</b></td>
+<td rowspan=4 valign=top><b>[LeCun and Kanter and Solla, 1991]
+</b><br>
+<P>Y. LeCun, I. Kanter, and S. Solla, "Eigenvalues of covariance matrices: application to neural-network learning," <EM>Physical Review Letters</EM>, vol. 66, no. 18, pp. 2396-2399, May 1991.
+<font size=2>[4 pages]</font></td>
+<td>&nbsp;</td><td><a href=lecun.bib#lecun-kanter-solla-91><img src=images/bibtex-icon-40x14.gif border=0></a></td></tr>
+<tr><td>72KB</td><td><a href=djvu/lecun-kanter-solla-91.djvu><img src=images/djvu-icon-40x14.gif border=0></a></td></tr>
+<tr><td>988KB</td><td><a href=psgz/lecun-kanter-solla-91.ps.gz><img src=images/psgz-icon-40x14.gif border=0></a></td></tr>
+<tr><td>3807KB</td><td><a href=pdf/lecun-kanter-solla-91.pdf><img src=images/pdf-icon-40x14.gif border=0></a></td></tr>
+</td></tr></table><br>
+<a name=solla-lecun-91 ><table width=95% cellspacing=0 border=0  bgcolor=#f4e8d1 align=center>
+<tr><td rowspan=4 valign=top width=30><b>30.</b></td>
+<td rowspan=4 valign=top><b>[Solla and LeCun, 1991]
+</b><br>
+<P>S. Solla and Y. LeCun, "Constrained Neural Networks for Pattern Recognition," in <EM>Neural Networks: Concepts, Applications and Implementations Vol IV</EM>, (P. Antognetti and V. Milutinovic, eds.), pp. 142-161, 1991.
+<font size=2>[18 pages]</font></td>
+<td>&nbsp;</td><td><a href=lecun.bib#solla-lecun-91><img src=images/bibtex-icon-40x14.gif border=0></a></td></tr>
+<tr><td>186KB</td><td><a href=djvu/solla-lecun-91.djvu><img src=images/djvu-icon-40x14.gif border=0></a></td></tr>
+<tr><td>2570KB</td><td><a href=psgz/solla-lecun-91.ps.gz><img src=images/psgz-icon-40x14.gif border=0></a></td></tr>
+<tr><td>10297KB</td><td><a href=pdf/solla-lecun-91.pdf><img src=images/pdf-icon-40x14.gif border=0></a></td></tr>
+</td></tr></table><br>
+<a name=howard-90 ><table width=95% cellspacing=0 border=0  bgcolor=#f4e8d1 align=center>
+<tr><td rowspan=4 valign=top width=30><b>29.</b></td>
+<td rowspan=4 valign=top><b>[Howard et al., 1990]
+</b><br>
+<P>R.E. Howard, B. Boser, J.S. Denker, H.P. Graf, D. Henderson, W. Hubbard, L.D. Jackel, Y. Le Cun, and H. S. Baird, "Optical character recognition: a technology driver for neural networks," in <EM>IEEE International Symposium on Circuits and Systems, 1990</EM>, pp. 2433-2436, 1990.
+<font size=2>[4 pages]</font></td>
+<td>&nbsp;</td><td><a href=lecun.bib#howard-90><img src=images/bibtex-icon-40x14.gif border=0></a></td></tr>
+<tr><td>157KB</td><td><a href=djvu/howard-90.djvu><img src=images/djvu-icon-40x14.gif border=0></a></td></tr>
+<tr><td>362KB</td><td><a href=psgz/howard-90.ps.gz><img src=images/psgz-icon-40x14.gif border=0></a></td></tr>
+<tr><td>342KB</td><td><a href=pdf/howard-90.pdf><img src=images/pdf-icon-40x14.gif border=0></a></td></tr>
+</td></tr></table><br>
+<a name=matan-90 ><table width=95% cellspacing=0 border=0  bgcolor=#f4e8d1 align=center>
+<tr><td rowspan=4 valign=top width=30><b>28.</b></td>
+<td rowspan=4 valign=top><b>[Matan et al., 1990]
+</b><br>
+<P>O. Matan, R. K. Kiang, C. E. Stenard, B. Boser, J. S. Denker, D. Henderson, R. E. Howard, W. Hubbard, L. D. Jackel, and Y. LeCun, "Handwritten character recognition using neural network architectures," in <EM>Proc. of the 4th US Postal Service Advanced Technology Conference</EM>, (Washington D.C.), Nov. 1990.
+<font size=2>[9 pages]</font></td>
+<td>&nbsp;</td><td><a href=lecun.bib#matan-90><img src=images/bibtex-icon-40x14.gif border=0></a></td></tr>
+<tr><td>80KB</td><td><a href=djvu/matan-90.djvu><img src=images/djvu-icon-40x14.gif border=0></a></td></tr>
+<tr><td>1085KB</td><td><a href=psgz/matan-90.ps.gz><img src=images/psgz-icon-40x14.gif border=0></a></td></tr>
+<tr><td>4708KB</td><td><a href=pdf/matan-90.pdf><img src=images/pdf-icon-40x14.gif border=0></a></td></tr>
+</td></tr></table><br>
+<a name=guyon-90 ><table width=95% cellspacing=0 border=0  bgcolor=#f4e8d1 align=center>
+<tr><td rowspan=4 valign=top width=30><b>27.</b></td>
+<td rowspan=4 valign=top><b>[Guyon et al., 1990]
+</b><br>
+<P>I. Guyon, P. Albrecht, Y. LeCun, J. S. Denker, and W. Hubbard, "A time delay neural network character recognizer for a touch terminal," in <EM>Proc. of the International Neural Network Conference</EM>, (Paris), June 1990.
+<font size=2>[9 pages]</font></td>
+<td>&nbsp;</td><td><a href=lecun.bib#guyon-90><img src=images/bibtex-icon-40x14.gif border=0></a></td></tr>
+<td>&nbsp;</td><td>&nbsp;</td></tr>
+<tr><td>&nbsp;</td><td>&nbsp;</td></tr>
+<tr><td>&nbsp;</td><td>&nbsp;</td></tr>
+</td></tr></table><br>
+<a name=lecun-90f ><table width=95% cellspacing=0 border=0  bgcolor=#f4e8d1 align=center>
+<tr><td rowspan=4 valign=top width=30><b>26.</b></td>
+<td rowspan=4 valign=top><b>[LeCun et al., 1990]
+</b><br>
+<P>Y. LeCun, L. D. Jackel, H. P. Graf, B. Boser, J. S. Denker, I. Guyon, D. Henderson, R. E. Howard, and S. Hubbard, Solla, "Optical Character Recognition and Neural-Net Chips," in <EM>Proc. of the International Neural Network Conference</EM>, (Paris), June 1990.
+<font size=2>[9 pages]</font></td>
+<td>&nbsp;</td><td><a href=lecun.bib#lecun-90f><img src=images/bibtex-icon-40x14.gif border=0></a></td></tr>
+<td>&nbsp;</td><td>&nbsp;</td></tr>
+<tr><td>&nbsp;</td><td>&nbsp;</td></tr>
+<tr><td>&nbsp;</td><td>&nbsp;</td></tr>
+</td></tr></table><br>
+<a name=lecun-90e ><table width=95% cellspacing=0 border=0  bgcolor=#f4e8d1 align=center>
+<tr><td rowspan=4 valign=top width=30><b>25.</b></td>
+<td rowspan=4 valign=top><b>[LeCun et al., 1990]
+</b><br>
+<P>Y. LeCun, O. Matan, B. Boser, J. S. Denker, D. Henderson, R. E. Howard, W. Hubbard, L. D. Jackel, and H. S. Baird, "Handwritten Zip Code Recognition with Multilayer Networks," in <EM>Proc. of the International Conference on Pattern Recognition</EM>, (IAPR, ed.), (Atlantic City), pp. 35-40, 1990.
+<font size=2>[6 pages]</font></td>
+<td>&nbsp;</td><td><a href=lecun.bib#lecun-90e><img src=images/bibtex-icon-40x14.gif border=0></a></td></tr>
+<tr><td>177KB</td><td><a href=djvu/lecun-90e.djvu><img src=images/djvu-icon-40x14.gif border=0></a></td></tr>
+<tr><td>511KB</td><td><a href=psgz/lecun-90e.ps.gz><img src=images/psgz-icon-40x14.gif border=0></a></td></tr>
+<tr><td>491KB</td><td><a href=pdf/lecun-90e.pdf><img src=images/pdf-icon-40x14.gif border=0></a></td></tr>
+</td></tr></table><br>
+<a name=lecun-90d ><table width=95% cellspacing=0 border=0  bgcolor=#f4e8d1 align=center>
+<tr><td rowspan=4 valign=top width=30><b>24.</b></td>
+<td rowspan=4 valign=top><b>[LeCun et al., 1990]
+</b><br>
+<P>Y. LeCun, B. Boser, J. S. Denker, D. Henderson, R. E. Howard, W. Hubbard, L. D. Jackel, and Baird H. S., "Constrained Neural Network for Unconstrained Handwritten Digit Recognition," in <EM>Frontiers in Handwriting Recognition</EM>, (C Suen, ed.), (Montreal), 1990.
+<font size=2>[6 pages]</font></td>
+<td>&nbsp;</td><td><a href=lecun.bib#lecun-90d><img src=images/bibtex-icon-40x14.gif border=0></a></td></tr>
+<td>&nbsp;</td><td>&nbsp;</td></tr>
+<tr><td>&nbsp;</td><td>&nbsp;</td></tr>
+<tr><td>&nbsp;</td><td>&nbsp;</td></tr>
+</td></tr></table><br>
+<a name=lecun-90c ><table width=95% cellspacing=0 border=0  bgcolor=#f4e8d1 align=center>
+<tr><td rowspan=4 valign=top width=30><b>23.</b></td>
+<td rowspan=4 valign=top><b>[LeCun et al., 1990]
+</b><br>
+<P>Y. LeCun, B. Boser, J. S. Denker, D. Henderson, R. E. Howard, W. Hubbard, and L. D. Jackel, "Handwritten digit recognition with a back-propagation network," in <EM>Advances in Neural Information Processing Systems 2 (NIPS*89)</EM>, (David Touretzky, ed.), (Denver, CO), 1990.
+<font size=2>[9 pages]</font></td>
+<td>&nbsp;</td><td><a href=lecun.bib#lecun-90c><img src=images/bibtex-icon-40x14.gif border=0></a></td></tr>
+<tr><td>75KB</td><td><a href=djvu/lecun-90c.djvu><img src=images/djvu-icon-40x14.gif border=0></a></td></tr>
+<tr><td>82KB</td><td><a href=psgz/lecun-90c.ps.gz><img src=images/psgz-icon-40x14.gif border=0></a></td></tr>
+<tr><td>200KB</td><td><a href=pdf/lecun-90c.pdf><img src=images/pdf-icon-40x14.gif border=0></a></td></tr>
+</td></tr></table><br>
+<a name=lecun-90b ><table width=95% cellspacing=0 border=0  bgcolor=#f4e8d1 align=center>
+<tr><td rowspan=4 valign=top width=30><b>22.</b></td>
+<td rowspan=4 valign=top><b>[LeCun et al., 1990]
+</b><br>
+<P>Yann LeCun, J. S. Denker, S. Solla, R. E. Howard, and L. D. Jackel, "Optimal Brain Damage," in <EM>Advances in Neural Information Processing Systems 2 (NIPS*89)</EM>, (David Touretzky, ed.), (Denver, CO), 1990.
+<font size=2>[8 pages]</font></td>
+<td>&nbsp;</td><td><a href=lecun.bib#lecun-90b><img src=images/bibtex-icon-40x14.gif border=0></a></td></tr>
+<tr><td>53KB</td><td><a href=djvu/lecun-90b.djvu><img src=images/djvu-icon-40x14.gif border=0></a></td></tr>
+<tr><td>45KB</td><td><a href=psgz/lecun-90b.ps.gz><img src=images/psgz-icon-40x14.gif border=0></a></td></tr>
+<tr><td>118KB</td><td><a href=pdf/lecun-90b.pdf><img src=images/pdf-icon-40x14.gif border=0></a></td></tr>
+</td></tr></table><br>
+<a name=jackel-90b ><table width=95% cellspacing=0 border=0  bgcolor=#f4e8d1 align=center>
+<tr><td rowspan=4 valign=top width=30><b>21.</b></td>
+<td rowspan=4 valign=top><b>[Jackel et al., 1990]
+</b><br>
+<P>L.D. Jackel, B. Boser, J.S. Denker, H.P. Graf, Y. Le Cun, I. Guyon, D. Henderson, R.E. Howard, W. Hubbard, and S.A. Solla, "Hardware requirements for neural-net optical character recognition," in <EM>Proc. of the International Joint Conference on Neural Networks</EM>, pp. 855-861, 1990.
+<font size=2>[7 pages]</font></td>
+<td>&nbsp;</td><td><a href=lecun.bib#jackel-90b><img src=images/bibtex-icon-40x14.gif border=0></a></td></tr>
+<tr><td>171KB</td><td><a href=djvu/jackel-90b.djvu><img src=images/djvu-icon-40x14.gif border=0></a></td></tr>
+<tr><td>508KB</td><td><a href=psgz/jackel-90b.ps.gz><img src=images/psgz-icon-40x14.gif border=0></a></td></tr>
+<tr><td>486KB</td><td><a href=pdf/jackel-90b.pdf><img src=images/pdf-icon-40x14.gif border=0></a></td></tr>
+</td></tr></table><br>
+<a name=jackel-90 ><table width=95% cellspacing=0 border=0  bgcolor=#f4e8d1 align=center>
+<tr><td rowspan=4 valign=top width=30><b>20.</b></td>
+<td rowspan=4 valign=top><b>[Jackel et al., 1990]
+</b><br>
+<P>L. Jackel, B. Boser, H.-P. Graf, J. Denker, Y. LeCun, D. Henderson, O. Matan, R. Howard, and H. Baird, "VLSI Implementation of Electronic Neural Networks: and Example in Character Recognition," in <EM>IEEE International Conference on Systems, Man, and Cybernetics</EM>, (IEEE, ed.), (Los Angeles, CA), pp. 320-322, Nov. 1990.
+<font size=2>[3 pages]</font></td>
+<td>&nbsp;</td><td><a href=lecun.bib#jackel-90><img src=images/bibtex-icon-40x14.gif border=0></a></td></tr>
+<tr><td>122KB</td><td><a href=djvu/jackel-90.djvu><img src=images/djvu-icon-40x14.gif border=0></a></td></tr>
+<tr><td>347KB</td><td><a href=psgz/jackel-90.ps.gz><img src=images/psgz-icon-40x14.gif border=0></a></td></tr>
+<tr><td>328KB</td><td><a href=pdf/jackel-90.pdf><img src=images/pdf-icon-40x14.gif border=0></a></td></tr>
+</td></tr></table><br>
+<a name=lecun-89e ><table width=95% cellspacing=0 border=0  bgcolor=#f4e8d1 align=center>
+<tr><td rowspan=4 valign=top width=30><b>19.</b></td>
+<td rowspan=4 valign=top><b>[LeCun et al., 1989]
+</b><br>
+<P>Y. LeCun, B. Boser, J. S. Denker, D. Henderson, R. E. Howard, W. Hubbard, and L. D. Jackel, "Backpropagation Applied to Handwritten Zip Code Recognition," <EM>Neural Computation</EM>, vol. 1, no. 4, pp. 541-551, Winter 1989.
+<font size=2>[11 pages]</font></td>
+<td>&nbsp;</td><td><a href=lecun.bib#lecun-89e><img src=images/bibtex-icon-40x14.gif border=0></a></td></tr>
+<tr><td>103KB</td><td><a href=djvu/lecun-89e.djvu><img src=images/djvu-icon-40x14.gif border=0></a></td></tr>
+<tr><td>1302KB</td><td><a href=psgz/lecun-89e.ps.gz><img src=images/psgz-icon-40x14.gif border=0></a></td></tr>
+<tr><td>5529KB</td><td><a href=pdf/lecun-89e.pdf><img src=images/pdf-icon-40x14.gif border=0></a></td></tr>
+</td></tr></table><br>
+<a name=lecun-89d ><table width=95% cellspacing=0 border=0  bgcolor=#f4e8d1 align=center>
+<tr><td rowspan=4 valign=top width=30><b>18.</b></td>
+<td rowspan=4 valign=top><b>[LeCun et al., 1989]
+</b><br>
+<P>Y. LeCun, L. D. Jackel, B. Boser, J. S. Denker, H. P. Graf, I. Guyon, D. Henderson, R. E. Howard, and W. Hubbard, "Handwritten Digit Recognition: Applications of Neural Net Chips and Automatic Learning," in <EM>Neurocomputing, Algorithms, Architectures and Applications</EM>, (F. Fogelman, J. Herault, and Y. Burnod, eds.), (Les Arcs, France), 1989.
+<font size=2>[11 pages]</font></td>
+<td>&nbsp;</td><td><a href=lecun.bib#lecun-89d><img src=images/bibtex-icon-40x14.gif border=0></a></td></tr>
+<td>&nbsp;</td><td>&nbsp;</td></tr>
+<tr><td>&nbsp;</td><td>&nbsp;</td></tr>
+<tr><td>&nbsp;</td><td>&nbsp;</td></tr>
+</td></tr></table><br>
+<a name=lecun-89c ><table width=95% cellspacing=0 border=0  bgcolor=#f4e8d1 align=center>
+<tr><td rowspan=4 valign=top width=30><b>17.</b></td>
+<td rowspan=4 valign=top><b>[LeCun et al., 1989]
+</b><br>
+<P>Y. LeCun, L. D. Jackel, B. Boser, J. S. Denker, H. P. Graf, I. Guyon, D. Henderson, R. E. Howard, and W. Hubbard, "Handwritten Digit Recognition: Applications of Neural Net Chips and Automatic Learning," <EM>IEEE Communication</EM>, pp. 41-46, Nov. 1989.
+<font size=2>[5 pages]</font></td>
+<td>&nbsp;</td><td><a href=lecun.bib#lecun-89c><img src=images/bibtex-icon-40x14.gif border=0></a></td></tr>
+<tr><td>136KB</td><td><a href=djvu/lecun-89c.djvu><img src=images/djvu-icon-40x14.gif border=0></a></td></tr>
+<tr><td>1509KB</td><td><a href=psgz/lecun-89c.ps.gz><img src=images/psgz-icon-40x14.gif border=0></a></td></tr>
+<tr><td>1041KB</td><td><a href=pdf/lecun-89c.pdf><img src=images/pdf-icon-40x14.gif border=0></a></td></tr>
+</td></tr></table><br>
+<a name=lecun-89b ><table width=95% cellspacing=0 border=0  bgcolor=#f4e8d1 align=center>
+<tr><td rowspan=4 valign=top width=30><b>16.</b></td>
+<td rowspan=4 valign=top><b>[LeCun and Galland and Hinton. Geoffrey E., 1989]
+</b><br>
+<P>Yann LeCun, Conrad C. Galland, and Hinton. Geoffrey E., "GEMINI: Gradient estimation through matrix inversion after noise injection," in <EM>Advances in Neural Information Processing Systems 1 (NIPS*88)</EM>, (David Touretzky, ed.), (Denver, CO), 1989.
+<font size=2>[8 pages]</font></td>
+<td>&nbsp;</td><td><a href=lecun.bib#lecun-89b><img src=images/bibtex-icon-40x14.gif border=0></a></td></tr>
+<tr><td>95KB</td><td><a href=djvu/lecun-89b.djvu><img src=images/djvu-icon-40x14.gif border=0></a></td></tr>
+<tr><td>1572KB</td><td><a href=psgz/lecun-89b.ps.gz><img src=images/psgz-icon-40x14.gif border=0></a></td></tr>
+<tr><td>6391KB</td><td><a href=pdf/lecun-89b.pdf><img src=images/pdf-icon-40x14.gif border=0></a></td></tr>
+</td></tr></table><br>
+<a name=lecun-89 ><table width=95% cellspacing=0 border=0  bgcolor=#f4e8d1 align=center>
+<tr><td rowspan=4 valign=top width=30><b>15.</b></td>
+<td rowspan=4 valign=top><b>[LeCun, 1989]
+</b><br>
+<P>Y. LeCun, "Generalization and Network Design Strategies," in <EM>Connectionism in Perspective</EM>, (R. Pfeifer, Z. Schreter, F. Fogelman, and L. Steels, eds.), (Zurich, Switzerland), 1989.
+<font size=2>[8 pages]</font></td>
+<td>&nbsp;</td><td><a href=lecun.bib#lecun-89><img src=images/bibtex-icon-40x14.gif border=0></a></td></tr>
+<td>&nbsp;</td><td>&nbsp;</td></tr>
+<tr><td>&nbsp;</td><td>&nbsp;</td></tr>
+<tr><td>&nbsp;</td><td>&nbsp;</td></tr>
+</td></tr></table><br>
+<a name=lecun-89t ><table width=95% cellspacing=0 border=0  bgcolor=#f4e8d1 align=center>
+<tr><td rowspan=4 valign=top width=30><b>14.</b></td>
+<td rowspan=4 valign=top><b>[LeCun, 1989]
+</b><br>
+<P>Y. LeCun, "Generalization and Network Design Strategies," Department of Computer Science, University of Toronto, 1989.
+<font size=2>[20 pages]</font></td>
+<td>&nbsp;</td><td><a href=lecun.bib#lecun-89t><img src=images/bibtex-icon-40x14.gif border=0></a></td></tr>
+<tr><td>167KB</td><td><a href=djvu/lecun-89t.djvu><img src=images/djvu-icon-40x14.gif border=0></a></td></tr>
+<tr><td>2268KB</td><td><a href=psgz/lecun-89t.ps.gz><img src=images/psgz-icon-40x14.gif border=0></a></td></tr>
+<tr><td>9613KB</td><td><a href=pdf/lecun-89t.pdf><img src=images/pdf-icon-40x14.gif border=0></a></td></tr>
+</td></tr></table><br>
+<a name=lecun-88 ><table width=95% cellspacing=0 border=0  bgcolor=#f4e8d1 align=center>
+<tr><td rowspan=4 valign=top width=30><b>13.</b></td>
+<td rowspan=4 valign=top><b>[LeCun, 1988]
+</b><br>
+<P>Y. LeCun, "A theoretical framework for Back-Propagation," in <EM>Proceedings of the 1988 Connectionist Models Summer School</EM>, (D. Touretzky, G. Hinton, and T. Sejnowski, eds.), (CMU, Pittsburgh, Pa), pp. 21-28, 1988.
+<font size=2>[8 pages]</font></td>
+<td>&nbsp;</td><td><a href=lecun.bib#lecun-88><img src=images/bibtex-icon-40x14.gif border=0></a></td></tr>
+<tr><td>109KB</td><td><a href=djvu/lecun-88.djvu><img src=images/djvu-icon-40x14.gif border=0></a></td></tr>
+<tr><td>1581KB</td><td><a href=psgz/lecun-88.ps.gz><img src=images/psgz-icon-40x14.gif border=0></a></td></tr>
+<tr><td>6282KB</td><td><a href=pdf/lecun-88.pdf><img src=images/pdf-icon-40x14.gif border=0></a></td></tr>
+</td></tr></table><br>
+<a name=lecun-bottou-88 ><table width=95% cellspacing=0 border=0  bgcolor=#f4e8d1 align=center>
+<tr><td rowspan=4 valign=top width=30><b>12.</b></td>
+<td rowspan=4 valign=top><b>[LeCun and Bottou, 1988]
+</b><br>
+<P>Y. LeCun and Leon-Yves Bottou, "SN: A Simulator For Connectionist Models", Mar. 1988.
+<font size=2>[8 pages]</font></td>
+<td>&nbsp;</td><td><a href=lecun.bib#lecun-bottou-88><img src=images/bibtex-icon-40x14.gif border=0></a></td></tr>
+<td>&nbsp;</td><td>&nbsp;</td></tr>
+<tr><td>&nbsp;</td><td>&nbsp;</td></tr>
+<tr><td>&nbsp;</td><td>&nbsp;</td></tr>
+</td></tr></table><br>
+<a name=becker-lecun-89 ><table width=95% cellspacing=0 border=0  bgcolor=#f4e8d1 align=center>
+<tr><td rowspan=4 valign=top width=30><b>11.</b></td>
+<td rowspan=4 valign=top><b>[Becker and LeCun, 1989]
+</b><br>
+<P>S. Becker and Y. LeCun, "Improving the Convergence of Back-Propagation Learning with Second-Order Methods," in <EM>Proc. of the 1988 Connectionist Models Summer School</EM>, (D. Touretzky, G. Hinton, and T. Sejnowski, eds.), (San Mateo), pp. 29-37, 1989.
+<font size=2>[10 pages]</font></td>
+<td>&nbsp;</td><td><a href=lecun.bib#becker-lecun-89><img src=images/bibtex-icon-40x14.gif border=0></a></td></tr>
+<tr><td>153KB</td><td><a href=djvu/becker-lecun-89.djvu><img src=images/djvu-icon-40x14.gif border=0></a></td></tr>
+<tr><td>1997KB</td><td><a href=psgz/becker-lecun-89.ps.gz><img src=images/psgz-icon-40x14.gif border=0></a></td></tr>
+<tr><td>7962KB</td><td><a href=pdf/becker-lecun-89.pdf><img src=images/pdf-icon-40x14.gif border=0></a></td></tr>
+</td></tr></table><br>
+<a name=bottou-lecun-88 ><table width=95% cellspacing=0 border=0  bgcolor=#f4e8d1 align=center>
+<tr><td rowspan=4 valign=top width=30><b>10.</b></td>
+<td rowspan=4 valign=top><b>[Bottou and LeCun, 1988]
+</b><br>
+<P>L.-Y. Bottou and Y. LeCun, "SN: A Simulator for Connectionist Models," in <EM>Proceedings of NeuroNimes 88</EM>, (Nimes, France), 1988.
+<font size=2>[10 pages]</font></td>
+<td>&nbsp;</td><td><a href=lecun.bib#bottou-lecun-88><img src=images/bibtex-icon-40x14.gif border=0></a></td></tr>
+<td>&nbsp;</td><td>&nbsp;</td></tr>
+<tr><td>&nbsp;</td><td>&nbsp;</td></tr>
+<tr><td>&nbsp;</td><td>&nbsp;</td></tr>
+</td></tr></table><br>
+<a name=lecun-87 ><table width=95% cellspacing=0 border=0  bgcolor=#f4e8d1 align=center>
+<tr><td rowspan=4 valign=top width=30><b>9.</b></td>
+<td rowspan=4 valign=top><b>[LeCun, 1987]
+</b><br>
+<P>Y. LeCun, "Modeles connexionnistes de l'apprentissage (connectionist learning models)", June 1987.
+<font size=2>[277 pages]</font></td>
+<td>&nbsp;</td><td><a href=lecun.bib#lecun-87><img src=images/bibtex-icon-40x14.gif border=0></a></td></tr>
+<tr><td>2482KB</td><td><a href=djvu/lecun-87.djvu><img src=images/djvu-icon-40x14.gif border=0></a></td></tr>
+<tr><td>9227KB</td><td><a href=psgz/lecun-87.ps.gz><img src=images/psgz-icon-40x14.gif border=0></a></td></tr>
+<tr><td>&nbsp;</td><td>&nbsp;</td></tr>
+</td></tr></table><br>
+<a name=lecun-87b ><table width=95% cellspacing=0 border=0  bgcolor=#f4e8d1 align=center>
+<tr><td rowspan=4 valign=top width=30><b>8.</b></td>
+<td rowspan=4 valign=top><b>[LeCun and Fogelman-Soulie, 1987]
+</b><br>
+<P>Y. LeCun and F. Fogelman-Soulie, "Modeles connexionnistes de l'apprentissage," <EM>Intellectica, special issue apprentissage et machine</EM>, Mar. 1987.
+<font size=2>[16 pages]</font></td>
+<td>&nbsp;</td><td><a href=lecun.bib#lecun-87b><img src=images/bibtex-icon-40x14.gif border=0></a></td></tr>
+<tr><td>469KB</td><td><a href=djvu/lecun-87b.djvu><img src=images/djvu-icon-40x14.gif border=0></a></td></tr>
+<tr><td>3078KB</td><td><a href=psgz/lecun-87b.ps.gz><img src=images/psgz-icon-40x14.gif border=0></a></td></tr>
+<tr><td>&nbsp;</td><td>&nbsp;</td></tr>
+</td></tr></table><br>
+<a name=fogelman-gallinari-lecun-thiria-87 ><table width=95% cellspacing=0 border=0  bgcolor=#f4e8d1 align=center>
+<tr><td rowspan=4 valign=top width=30><b>7.</b></td>
+<td rowspan=4 valign=top><b>[{Fogelman-Soulie} et al., 1987]
+</b><br>
+<P>F. Fogelman-Soulie, P. Gallinari, Y. LeCun, and S. Thiria, "Automata networks and artificial intelligence," in <EM>Automata networks in computer science, theory and applications</EM>, pp. 133-186, 1987.
+<font size=2>[61 pages]</font></td>
+<td>&nbsp;</td><td><a href=lecun.bib#fogelman-gallinari-lecun-thiria-87><img src=images/bibtex-icon-40x14.gif border=0></a></td></tr>
+<tr><td>694KB</td><td><a href=djvu/fogelman-gallinari-lecun-thiria-87.djvu><img src=images/djvu-icon-40x14.gif border=0></a></td></tr>
+<tr><td>8954KB</td><td><a href=psgz/fogelman-gallinari-lecun-thiria-87.ps.gz><img src=images/psgz-icon-40x14.gif border=0></a></td></tr>
+<tr><td>&nbsp;</td><td>&nbsp;</td></tr>
+</td></tr></table><br>
+<a name=gallinari-87 ><table width=95% cellspacing=0 border=0  bgcolor=#f4e8d1 align=center>
+<tr><td rowspan=4 valign=top width=30><b>6.</b></td>
+<td rowspan=4 valign=top><b>[Gallinari et al.,  1987]
+</b><br>
+<P>P. Gallinari, Y. LeCun, S. Thiria, and Fogelman-Soulie F., "Memoires associatives distribuees: une comparaison (distributed associative memories: a comparison)," in <EM>Proceedings of COGNITIVA 87</EM>, ( Paris, La Villette), Cesta-Afcet,  May   1987.
+<font size=2>[8 pages]</font></td>
+<td>&nbsp;</td><td><a href=lecun.bib#gallinari-87><img src=images/bibtex-icon-40x14.gif border=0></a></td></tr>
+<tr><td>161KB</td><td><a href=djvu/gallinari-87.djvu><img src=images/djvu-icon-40x14.gif border=0></a></td></tr>
+<tr><td>1637KB</td><td><a href=psgz/gallinari-87.ps.gz><img src=images/psgz-icon-40x14.gif border=0></a></td></tr>
+<tr><td>6325KB</td><td><a href=pdf/gallinari-87.pdf><img src=images/pdf-icon-40x14.gif border=0></a></td></tr>
+</td></tr></table><br>
+<a name=fogelman-gallinari-lecun-thiria-87b ><table width=95% cellspacing=0 border=0  bgcolor=#f4e8d1 align=center>
+<tr><td rowspan=4 valign=top width=30><b>5.</b></td>
+<td rowspan=4 valign=top><b>[{Fogelman-Soulie} et al., 1987]
+</b><br>
+<P>F. Fogelman-Soulie, P. Gallinari, Y. LeCun, and S. Thiria, "generalization using back-propagation," in <EM>Proc. of the first International Conference on Neural Networks</EM>, (San Diego, California), IEEE, June 1987.
+<font size=2>[8 pages]</font></td>
+<td>&nbsp;</td><td><a href=lecun.bib#fogelman-gallinari-lecun-thiria-87b><img src=images/bibtex-icon-40x14.gif border=0></a></td></tr>
+<td>&nbsp;</td><td>&nbsp;</td></tr>
+<tr><td>&nbsp;</td><td>&nbsp;</td></tr>
+<tr><td>&nbsp;</td><td>&nbsp;</td></tr>
+</td></tr></table><br>
+<a name=fogelman-gallinari-lecun-thiria-87c ><table width=95% cellspacing=0 border=0  bgcolor=#f4e8d1 align=center>
+<tr><td rowspan=4 valign=top width=30><b>4.</b></td>
+<td rowspan=4 valign=top><b>[{Fogelman-Soulie} et al., 1987]
+</b><br>
+<P>F. Fogelman-Soulie, P. Gallinari, Y. LeCun, and S. Thiria, "Learning on automata networks," in <EM>Proc. of Congres d'Intelligence Artificielle de Marseille</EM>, (Marseille, France), IIRIAM, 1987.
+<font size=2>[8 pages]</font></td>
+<td>&nbsp;</td><td><a href=lecun.bib#fogelman-gallinari-lecun-thiria-87c><img src=images/bibtex-icon-40x14.gif border=0></a></td></tr>
+<td>&nbsp;</td><td>&nbsp;</td></tr>
+<tr><td>&nbsp;</td><td>&nbsp;</td></tr>
+<tr><td>&nbsp;</td><td>&nbsp;</td></tr>
+</td></tr></table><br>
+<a name=lecun-86 ><table width=95% cellspacing=0 border=0  bgcolor=#f4e8d1 align=center>
+<tr><td rowspan=4 valign=top width=30><b>3.</b></td>
+<td rowspan=4 valign=top><b>[LeCun, 1986]
+</b><br>
+<P>Y. LeCun, "Learning Processes in an Asymmetric Threshold Network," in <EM>Disordered systems and biological organization</EM>, (E. Bienenstock, F. Fogelman-Soulie, and G. Weisbuch, eds.), (Les Houches, France), pp. 233-240, 1986.
+<font size=2>[8 pages]</font></td>
+<td>&nbsp;</td><td><a href=lecun.bib#lecun-86><img src=images/bibtex-icon-40x14.gif border=0></a></td></tr>
+<tr><td>122KB</td><td><a href=djvu/lecun-86.djvu><img src=images/djvu-icon-40x14.gif border=0></a></td></tr>
+<tr><td>1567KB</td><td><a href=psgz/lecun-86.ps.gz><img src=images/psgz-icon-40x14.gif border=0></a></td></tr>
+<tr><td>6108KB</td><td><a href=pdf/lecun-86.pdf><img src=images/pdf-icon-40x14.gif border=0></a></td></tr>
+</td></tr></table><br>
+<a name=lecun-85 ><table width=95% cellspacing=0 border=0  bgcolor=#f4e8d1 align=center>
+<tr><td rowspan=4 valign=top width=30><b>2.</b></td>
+<td rowspan=4 valign=top><b>[LeCun, 1985]
+</b><br>
+<P>Y. LeCun, "Une procedure d'apprentissage pour reseau a seuil asymmetrique (a Learning Scheme for Asymmetric Threshold Networks)," in <EM>Proceedings of Cognitiva 85</EM>, (Paris, France), pp. 599-604, 1985.
+<font size=2>[6 pages]</font></td>
+<td>&nbsp;</td><td><a href=lecun.bib#lecun-85><img src=images/bibtex-icon-40x14.gif border=0></a></td></tr>
+<tr><td>126KB</td><td><a href=djvu/lecun-85.djvu><img src=images/djvu-icon-40x14.gif border=0></a></td></tr>
+<tr><td>1086KB</td><td><a href=psgz/lecun-85.ps.gz><img src=images/psgz-icon-40x14.gif border=0></a></td></tr>
+<tr><td>4387KB</td><td><a href=pdf/lecun-85.pdf><img src=images/pdf-icon-40x14.gif border=0></a></td></tr>
+</td></tr></table><br>
+<a name=lecun-metsu-83 ><table width=95% cellspacing=0 border=0  bgcolor=#f4e8d1 align=center>
+<tr><td rowspan=4 valign=top width=30><b>1.</b></td>
+<td rowspan=4 valign=top><b>[LeCun and Metsu, 1983]
+</b><br>
+<P>Y. LeCun and P. Metsu, "Contribution a la conception d'une famille de circuits VLSIde traitement du signal (contribution to the design of a family of signal processing VLSI circuits," ESIEE, Paris, June 1983.
+<font size=2>[6 pages]</font></td>
+<td>&nbsp;</td><td><a href=lecun.bib#lecun-metsu-83><img src=images/bibtex-icon-40x14.gif border=0></a></td></tr>
+<td>&nbsp;</td><td>&nbsp;</td></tr>
+<tr><td>&nbsp;</td><td>&nbsp;</td></tr>
+<tr><td>&nbsp;</td><td>&nbsp;</td></tr>
+</td></tr></table><br>
+<center><font size=1>This page was produced by  <a href=http://bib2web.djvuzone.org>http://bib2web.djvuzone.org</a> designed by Yann LeCun, Florin Nicsa, and Jeffery Triggs</font><br><a href=http://bib2web.djvuzone.org><img src=images/b2w-80x40.gif border=0></a></center></body></html> </body></html>
